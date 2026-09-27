@@ -1,0 +1,41 @@
+{
+  "title": "Choose the Long Weekend SG composition",
+  "question": "The visual world is fixed. Which layout should the working site carry forward?",
+  "options": [
+    {
+      "id": "year-wall",
+      "label": "Year Wall",
+      "kicker": "RECOMMENDED",
+      "lineage": "airport planning wall",
+      "thesis": "All twelve months stay equally scannable while one floating leave ticket becomes the signature interaction.",
+      "palette": ["#071f33", "#f4eddf", "#e33434", "#aeb8bf"],
+      "materials": ["warm paper", "brushed aluminium", "ticket perforations"],
+      "viewport": "A compact control masthead above a four-by-three month wall, with the selected ticket floating over its month.",
+      "risk": "The dense year view demands disciplined type sizing on smaller laptops.",
+      "comp": ".impeccable/mocks/composition-a-year-wall.png"
+    },
+    {
+      "id": "operations-rail",
+      "label": "Operations Rail",
+      "lineage": "airport operations desk",
+      "thesis": "A strong left rail carries policy and legend while the selected month expands into a boarding-pass result.",
+      "palette": ["#071f33", "#f4eddf", "#e33434", "#aeb8bf"],
+      "materials": ["warm paper", "brushed aluminium", "boarding pass"],
+      "viewport": "A vertical command rail beside a three-column month field and a wide ticket crossing the selected month.",
+      "risk": "The rail reduces the space available for comparing all twelve months at once.",
+      "comp": ".impeccable/mocks/composition-b-operations-rail.png"
+    },
+    {
+      "id": "seasonal-bands",
+      "label": "Seasonal Bands",
+      "lineage": "departure planning board",
+      "thesis": "Quarter-like bands make cross-month breaks feel like one continuous runway-guidance path.",
+      "palette": ["#071f33", "#f4eddf", "#e33434", "#aeb8bf"],
+      "materials": ["warm paper", "brushed aluminium", "runway lights"],
+      "viewport": "Three seasonal rows of four month slips with a recommendation ticket suspended between adjacent cards.",
+      "risk": "The extra band labels add structure but slightly more visual ceremony.",
+      "comp": ".impeccable/mocks/composition-c-seasonal-bands.png"
+    }
+  ],
+  "buildPath": { "value": "comp", "toggle": false }
+}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-28T02:10:00+08:00",
+  "title": "Design System: Long Weekend SG",
+  "extensions": {
+    "colorMeta": {
+      "page": { "role": "neutral", "displayName": "Paper Grey", "canonical": "#f6f7f8", "tonalRamp": ["#202226", "#3b3e44", "#5b5f67", "#7c818b", "#a0a6af", "#c4c9cf", "#e3e7ea", "#f6f7f8"] },
+      "surface": { "role": "neutral", "displayName": "Clear White", "canonical": "#ffffff", "tonalRamp": ["#262626", "#464646", "#686868", "#8c8c8c", "#b0b0b0", "#d0d0d0", "#ececec", "#ffffff"] },
+      "ink": { "role": "neutral", "displayName": "Near Black", "canonical": "#111318", "tonalRamp": ["#111318", "#2b2e34", "#474b53", "#666b74", "#898e98", "#afb3ba", "#d5d7db", "#f1f2f3"] },
+      "holiday": { "role": "primary", "displayName": "Singapore Red", "canonical": "#c92f35", "tonalRamp": ["#3a090d", "#641219", "#8f1d24", "#b7282f", "#d84a4f", "#ea777b", "#f5aaad", "#fde4e5"] },
+      "leave-ink": { "role": "secondary", "displayName": "Planning Blue", "canonical": "#1769aa", "tonalRamp": ["#06243f", "#0a3d69", "#105891", "#2475b3", "#4c94cb", "#7fb5de", "#b7d7ed", "#e7f4fb"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page title only." },
+      "body": { "displayName": "Body", "purpose": "Product copy and caveats." },
+      "calendar": { "displayName": "Calendar", "purpose": "Aligned dates and month indices." }
+    },
+    "shadows": [
+      { "name": "active-card", "value": "0 9px 28px rgb(31 78 121 / 10%)", "purpose": "Temporary lift for a month containing the active plan." },
+      { "name": "recommendation", "value": "0 18px 48px rgb(16 24 40 / 18%)", "purpose": "Separates the recommendation from the year wall." }
+    ],
+    "motion": [
+      { "name": "state", "value": "150ms ease", "purpose": "Small border, shadow, and position state changes; removed under reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "three-column", "value": "1220px" },
+      { "name": "two-column", "value": "880px" },
+      { "name": "mobile", "value": "620px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Month Card",
+      "kind": "card",
+      "refersTo": "month-card",
+      "description": "Flat white calendar surface with interaction-only elevation.",
+      "html": "<article class=\"ds-month-card\"><strong>March</strong><span>03</span></article>",
+      "css": ".ds-month-card{display:flex;justify-content:space-between;min-height:180px;padding:16px;border:1px solid #e3e7ec;border-radius:12px;background:#fff;color:#111318;font-family:Geist,sans-serif}.ds-month-card:hover{border-color:#a8caea;box-shadow:0 9px 28px rgb(31 78 121 / 10%)}.ds-month-card:focus-visible{outline:2px solid #1769aa;outline-offset:3px}.ds-month-card span{color:#5f6d81;font-family:'Geist Mono',monospace;font-size:11px}"
+    },
+    {
+      "name": "Holiday Day",
+      "kind": "button",
+      "refersTo": "holiday-day",
+      "description": "Official holiday marker.",
+      "html": "<button class=\"ds-holiday\" aria-label=\"Public holiday\">9</button>",
+      "css": ".ds-holiday{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:50%;background:#c92f35;color:#fff;font:700 11px 'Geist Mono',monospace}.ds-holiday:hover{filter:brightness(.94)}.ds-holiday:focus-visible{outline:2px solid #1769aa;outline-offset:3px}"
+    },
+    {
+      "name": "Leave Day",
+      "kind": "button",
+      "refersTo": "leave-day",
+      "description": "Selected leave date within an active break.",
+      "html": "<button class=\"ds-leave\" aria-label=\"Suggested leave day\">8</button>",
+      "css": ".ds-leave{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:7px;background:#dceeff;color:#1769aa;box-shadow:inset 0 0 0 1px #83b8e2;font:700 11px 'Geist Mono',monospace}.ds-leave:hover{background:#cfe7fc}.ds-leave:focus-visible{outline:2px solid #1769aa;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Clear Year Wall",
+    "overview": "A calm, useful annual planning wall where neutral surfaces make the calendar easy to scan and color appears only when it explains meaning.",
+    "keyCharacteristics": ["Dense but breathable year overview", "Meaningful red and blue accents", "Flat at rest", "Explicit official and forecast states"],
+    "rules": [
+      { "name": "Meaningful Color", "body": "Every non-neutral hue communicates a calendar state.", "section": "colors" },
+      { "name": "Flat by Default", "body": "Shadows appear only as a response to interaction.", "section": "elevation" }
+    ],
+    "dos": ["Keep the year wall primary", "Use concise caveats", "Preserve keyboard and tap access"],
+    "donts": ["Do not reintroduce airport theming", "Do not add decorative gradients", "Do not hide forecast status"]
+  }
+}

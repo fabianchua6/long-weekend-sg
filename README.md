@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Long Weekend SG
 
-## Getting Started
+A one-page Singapore leave planner that turns the year into a visual map of public holidays, suggested leave days, and longer breaks.
 
-First, run the development server:
+## What it includes
+
+- 2027 official MOM public holidays.
+- 2028 provisional forecasts with confidence labels.
+- Ranked one-to-four-day leave recommendations.
+- Sunday observed-day handling and an opt-in Saturday workplace policy.
+- Optional 2027 MOE school-holiday shading that does not change rankings.
+- Hover, keyboard, click, and mobile bottom-sheet interactions.
+- No accounts, analytics, database, or runtime data dependency.
+
+## Local development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Use `?year=2028` to open the forecast view directly.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run test
+npm run typecheck
+npm run lint
+npm run build
+```
 
-## Learn More
+## Data sources
 
-To learn more about Next.js, take a look at the following resources:
+- [MOM public holidays for 2027](https://www.mom.gov.sg/newsroom/press-releases/2026/0618-public-holidays-for-2027)
+- [MOM public holiday entitlement and pay](https://www.mom.gov.sg/employment-practices/public-holidays-entitlement-and-pay)
+- [MOE school terms and holidays for 2027](https://www.moe.gov.sg/news/press-releases/20260714-school-terms-and-holidays-for-2027)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Forecast dates are stored separately and remain visibly provisional until MOM publishes the official 2028 calendar.
