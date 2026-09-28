@@ -45,26 +45,24 @@ function Toggle({
   checked,
   disabled,
   label,
-  hint,
+  description,
   onChange,
 }: {
   checked: boolean;
   disabled?: boolean;
   label: string;
-  hint?: string;
+  description?: string;
   onChange: (next: boolean) => void;
 }) {
   return (
     <label className={`${styles.toggleControl} ${disabled ? styles.toggleDisabled : ""}`}>
-      <span className={styles.toggleCopy}>
-        <span className={styles.toggleLabel}>{label}</span>
-        {hint ? <span className={styles.toggleHint}>{hint}</span> : null}
-      </span>
+      <span className={styles.toggleLabel}>{label}</span>
       <input
         className={styles.srOnly}
         type="checkbox"
         checked={checked}
         disabled={disabled}
+        aria-label={description ? `${label}. ${description}` : label}
         onChange={(event) => onChange(event.target.checked)}
       />
       <span className={styles.switch} aria-hidden="true">
@@ -92,15 +90,13 @@ function PlannerHeader({
   return (
     <>
       <header className={styles.header}>
-        <div className={styles.headingGroup}>
-          <div className={styles.eyebrow}>Singapore leave planner</div>
+        <div>
           <div className={styles.titleLine}>
             <h1>Long Weekend SG</h1>
             <span className={`${styles.statusBadge} ${year === 2028 ? styles.forecastBadge : ""}`}>
               {year === 2027 ? "Official" : "Provisional"}
             </span>
           </div>
-          <p>Spot the best days to take leave. See the whole year at once.</p>
         </div>
 
         <div className={styles.controls} aria-label="Planner settings" role="group">
@@ -121,13 +117,17 @@ function PlannerHeader({
             checked={schoolOverlay}
             disabled={year === 2028}
             label="School breaks"
-            hint={year === 2028 ? "Awaiting MOE dates" : "Show MOE dates"}
+            description={
+              year === 2028
+                ? "Unavailable until MOE publishes official 2028 dates."
+                : "Show official MOE school break dates."
+            }
             onChange={onSchoolOverlayChange}
           />
           <Toggle
             checked={saturdayPolicy}
             label="Saturday PH → Monday"
-            hint="Only if your workplace grants it"
+            description="Use only if your workplace grants Monday off after a Saturday public holiday."
             onChange={onSaturdayPolicyChange}
           />
         </div>
@@ -372,14 +372,6 @@ export function Planner({ initialYear }: PlannerProps) {
         />
 
         <section className={styles.calendarSection} aria-label={`${year} calendar`}>
-          <div className={styles.calendarIntro}>
-            <p>
-              Hover, focus or tap a <span className={styles.inlineHoliday}>holiday</span> or suggested
-              leave day to preview a break.
-            </p>
-            <span>{plans.length} useful combinations</span>
-          </div>
-
           <div className={styles.calendarGrid}>
             {MONTHS.map((month, monthIndex) => (
               <MonthCard

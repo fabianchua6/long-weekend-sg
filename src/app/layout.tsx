@@ -13,18 +13,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Long Weekend SG — Singapore leave planner",
+  metadataBase: new URL("https://long-weekend-sg.vercel.app"),
+  applicationName: "Long Weekend SG",
+  title: "Singapore Leave Planner 2027 & 2028 | Public Holidays & Long Weekends",
   description:
-    "See Singapore public holidays at a glance and discover which leave days create longer breaks.",
+    "Plan Singapore public holidays and long weekends at a glance. Find the best annual leave days for longer breaks, with official 2027 dates and a provisional 2028 forecast.",
   keywords: [
     "Singapore public holidays 2027",
+    "Singapore public holidays 2028",
     "Singapore long weekends",
-    "annual leave planner",
+    "Singapore leave planner",
+    "annual leave planner Singapore",
     "Singapore school holidays",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Long Weekend SG",
-    description: "Make your leave days go further.",
+    title: "Singapore Leave Planner — Public Holidays & Long Weekends",
+    description:
+      "Find the best annual leave days for longer breaks around Singapore public holidays.",
+    siteName: "Long Weekend SG",
     type: "website",
     locale: "en_SG",
   },

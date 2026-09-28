@@ -28,17 +28,6 @@
   margin-bottom: 28px;
 }
 
-.headingGroup { max-width: 620px; }
-
-.eyebrow {
-  margin-bottom: 9px;
-  color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .titleLine {
   display: flex;
   align-items: center;
@@ -51,12 +40,6 @@
   font-size: clamp(2rem, 3.2vw, 3.35rem);
   line-height: 0.98;
   letter-spacing: -0.065em;
-}
-
-.headingGroup p {
-  margin: 14px 0 0;
-  color: var(--muted);
-  font-size: clamp(0.94rem, 1.15vw, 1.05rem);
 }
 
 .statusBadge {
@@ -126,22 +109,11 @@
   cursor: pointer;
 }
 
-.toggleCopy {
-  display: grid;
-  flex: 1;
-  gap: 2px;
-}
-
 .toggleLabel {
+  flex: 1;
   color: var(--ink);
   font-size: 0.78rem;
   font-weight: 650;
-}
-
-.toggleHint {
-  color: var(--faint);
-  font-size: 0.65rem;
-  line-height: 1.15;
 }
 
 .toggleDisabled { cursor: not-allowed; opacity: 0.55; }
@@ -201,20 +173,6 @@
 .footer svg { width: 12px; height: 12px; }
 
 .calendarSection { position: relative; }
-
-.calendarIntro {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 0.74rem;
-}
-
-.calendarIntro p { margin: 0; }
-.calendarIntro > span { color: var(--faint); white-space: nowrap; }
-.inlineHoliday { color: var(--holiday); font-weight: 700; }
 
 .calendarGrid {
   display: grid;
@@ -521,12 +479,10 @@ button.day:hover { box-shadow: inset 0 0 0 1px #b7c8d8; }
   .page { padding: 20px 12px 32px; }
   .header { margin-bottom: 20px; }
   .titleLine h1 { font-size: 2.25rem; }
-  .headingGroup p { font-size: 0.9rem; }
   .controls { grid-template-columns: 1fr; }
   .yearTabs { min-height: 44px; }
   .toggleControl { min-height: 52px; }
   .notice { align-items: flex-start; flex-direction: column; gap: 8px; }
-  .calendarIntro { align-items: flex-start; flex-direction: column; gap: 4px; }
   .calendarGrid { grid-template-columns: 1fr; gap: 10px; }
   .monthCard { min-height: 274px; padding: 17px 18px; }
   .daySlot, .emptyDay { height: 31px; }
