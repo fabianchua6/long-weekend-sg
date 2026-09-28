@@ -21,10 +21,16 @@ typography:
     fontFamily: "Geist, sans-serif"
     fontWeight: 400
 rounded:
+  micro: "4px"
+  wash: "7px"
   day: "8px"
+  range: "9px"
+  compact: "10px"
   control: "15px"
+  popover: "18px"
   card: "20px"
   sheet: "22px"
+  pill: "999px"
 ---
 
 # Design System: Long Weekend SG
@@ -64,17 +70,17 @@ The page uses a centered shell capped at `1480px`. The year wall is four columns
 
 ## Shape and Depth
 
-Month cards use 20px corners, a one-pixel warm-grey border, and a low warm shadow. Controls use 15px corners. Day cells use 8–9px rounding, while holiday dates remain circular. The selected month lifts slightly and gains a plum border. The recommendation uses a broad 20–22px radius and a richer shadow, so it reads as the only saturated layer.
+Month cards use 20px corners with no border and a low warm shadow. Controls use 15px corners. Day cells use 8–9px rounding, while holiday dates remain circular. The selected month lifts slightly with a deeper shadow. The recommendation uses a broad 20–22px radius and a richer shadow, so it reads as the only saturated layer.
 
 ## Components
 
-### Year tabs and switches
+### Year and settings controls
 
-Year tabs sit in one warm neutral segmented control. The selected year becomes charcoal with white text. Both switches use identical grey-to-charcoal tracks; their labels remain black. The provisional badge and notice use a pale yellow treatment because they convey forecast status, not decoration.
+A single directional year control reads `2027 →` and `← 2028`; changing years slides the calendar in the same direction. Secondary preferences live in one Settings popover. Both switches use identical grey-to-charcoal tracks and their labels remain black. The provisional badge and notice use a pale yellow treatment because they convey forecast status, not decoration.
 
 ### Month cards
 
-Cards are soft white, rounded, and lightly elevated. Month names are editorial but black. Small grey month indices and restrained weekday labels keep attention on the dates.
+Cards are soft white, borderless, rounded, and lightly elevated. Month names are editorial but black. Small grey month indices and restrained weekday labels keep attention on the dates.
 
 ### Calendar states
 

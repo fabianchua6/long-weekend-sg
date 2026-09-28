@@ -13,7 +13,7 @@ related_targets: []
 - **Memorable moment:** Hover, focus, or tap a holiday or suggested bridge day; its complete break illuminates in marigold across the calendar and a compact plum editorial panel states the leave-to-rest exchange with two alternatives.
 - **Responsive behavior:** Four cards across on wide desktop, two on tablet, one on phone. Hover becomes tap; recommendation details become a bottom sheet on small screens.
 - **Approved comp:** `.impeccable/mocks/approved-editorial-year-wall.png`. Treat generated dates and labels as compositional placeholders; implementation uses verified datasets and accessible semantic controls. User feedback after approval makes black/charcoal the default text and control colour.
-- **Component grammar:** 20px card corners, 1px warm-grey borders, low warm shadows, compact tabular date numerals, softly joined range highlights, neutral pill controls, and 2px accessible focus rings.
+- **Component grammar:** 20px borderless card corners, low warm shadows, compact tabular date numerals, softly joined range highlights, a directional year switch, one neutral Settings popover, and 2px accessible focus rings.
 - **Type ramp:** Newsreader for the 54–86px product title, 22–26px month names, and 29–38px recommendation headline; Geist Sans for 12–15px controls, calendar numerals, and source labels.
 - **Palette:** page `#faf7f1`, card `#fffdf9`, text `#2f2926`, muted `#756c65`, border `#e8dfd4`, public holiday `#6b243e`, leave `#f5d36b`, school `#e5e7d2`, observed accent `#e65319`.
 - **Implementation inventory:** all interface content, calendar geometry, marks, popover, switches, and icons are semantic HTML/CSS or authored inline SVG. No shipping raster assets are required; the comp remains review evidence only.

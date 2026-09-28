@@ -68,38 +68,66 @@
 
 .controls {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 10px;
 }
 
-.yearTabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-self: stretch;
+.yearSwitch,
+.settingsButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-height: 46px;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 15px;
-  background: #f2eee8;
-  box-shadow: 0 5px 16px rgb(73 51 39 / 5%);
-}
-
-.yearTab {
-  min-width: 72px;
-  padding: 0 15px;
+  padding: 0 16px;
   border: 0;
-  border-radius: 11px;
-  background: transparent;
-  color: var(--muted);
+  border-radius: 15px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 5px 18px rgb(73 51 39 / 7%);
   cursor: pointer;
   font-size: 0.83rem;
-  font-weight: 630;
+  font-weight: 680;
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 
-.yearTabActive {
-  background: var(--ink);
-  color: #fffdf9;
-  box-shadow: 0 4px 12px rgb(43 36 32 / 18%);
+.yearSwitch { min-width: 102px; }
+.yearSwitch:hover,
+.settingsButton:hover { box-shadow: 0 8px 22px rgb(73 51 39 / 11%); transform: translateY(-1px); }
+.settingsButton:disabled { cursor: not-allowed; opacity: 0.45; transform: none; }
+.yearSwitch svg,
+.settingsButton svg { width: 16px; height: 16px; }
+.chevronLeft { transform: rotate(180deg); }
+
+.settingsShell { position: relative; }
+.settingsButton[aria-expanded="true"] { background: var(--ink); color: #fffdf9; }
+
+.settingsMenu {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 10px);
+  right: 0;
+  display: grid;
+  width: 260px;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 18px 48px rgb(73 51 39 / 16%);
+  opacity: 0;
+  transform: translateY(-6px) scale(0.985);
+  transform-origin: top right;
+  transition: opacity 150ms ease, transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.settingsMenuOpen { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.settingsMenuClosing { opacity: 0; transform: translateY(-4px) scale(0.985); }
+
+.settingsMenu .toggleControl {
+  width: 100%;
+  min-width: 0;
+  box-shadow: none;
 }
 
 .toggleControl {
@@ -182,6 +210,62 @@
 
 .calendarSection { position: relative; }
 
+.yearCanvas {
+  --year-transition-name: year-calendar;
+  view-transition-name: var(--year-transition-name);
+}
+
+.yearCanvasForward { animation: year-canvas-in-forward 250ms cubic-bezier(0.22, 1, 0.36, 1); }
+.yearCanvasBackward { animation: year-canvas-in-backward 250ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes year-canvas-in-forward {
+  from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes year-canvas-in-backward {
+  from { opacity: 0; transform: translateX(-18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+:global(::view-transition-old(year-calendar)),
+:global(::view-transition-new(year-calendar)) {
+  animation-duration: 250ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:global(html[data-year-direction="forward"]::view-transition-old(year-calendar)) {
+  animation-name: year-view-out-left;
+}
+
+:global(html[data-year-direction="forward"]::view-transition-new(year-calendar)) {
+  animation-name: year-view-in-right;
+}
+
+:global(html[data-year-direction="backward"]::view-transition-old(year-calendar)) {
+  animation-name: year-view-out-right;
+}
+
+:global(html[data-year-direction="backward"]::view-transition-new(year-calendar)) {
+  animation-name: year-view-in-left;
+}
+
+@keyframes year-view-out-left {
+  to { opacity: 0; transform: translateX(-22px); }
+}
+
+@keyframes year-view-in-right {
+  from { opacity: 0; transform: translateX(22px); }
+}
+
+@keyframes year-view-out-right {
+  to { opacity: 0; transform: translateX(22px); }
+}
+
+@keyframes year-view-in-left {
+  from { opacity: 0; transform: translateX(-22px); }
+}
+
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -193,16 +277,15 @@
   min-width: 0;
   min-height: 248px;
   padding: 16px 17px 15px;
-  border: 1px solid var(--line);
+  border: 0;
   border-radius: 20px;
   background: var(--surface);
   box-shadow: 0 8px 24px rgb(83 59 44 / 5%);
-  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 
 .monthCardActive {
   z-index: 3;
-  border-color: #a85271;
   box-shadow: 0 14px 36px rgb(88 35 57 / 12%);
   transform: translateY(-2px);
 }
@@ -485,7 +568,7 @@ button.day:hover { box-shadow: inset 0 0 0 1px #bba8ae; }
 @media (max-width: 880px) {
   .page { padding: 26px 18px 38px; }
   .titleLine h1 { font-size: clamp(3.2rem, 10vw, 4.7rem); }
-  .controls { display: grid; grid-template-columns: 150px 1fr 1fr; }
+  .controls { justify-content: flex-start; }
   .calendarGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .monthCard:nth-child(3n) .planPopover { right: auto; left: calc(100% + 12px); }
   .monthCard:nth-child(2n) .planPopover { right: calc(100% + 12px); left: auto; }
@@ -499,9 +582,10 @@ button.day:hover { box-shadow: inset 0 0 0 1px #bba8ae; }
   .titleLine { gap: 10px; }
   .titleLine h1 { font-size: clamp(2.9rem, 15vw, 4rem); }
   .statusBadge { min-height: 25px; padding-inline: 9px; }
-  .controls { grid-template-columns: 1fr; }
-  .yearTabs { min-height: 48px; }
-  .toggleControl { min-height: 52px; }
+  .controls { justify-content: space-between; }
+  .yearSwitch, .settingsButton { min-height: 48px; }
+  .settingsMenu { width: min(280px, calc(100vw - 24px)); }
+  .settingsMenu .toggleControl { min-height: 52px; }
   .notice { align-items: flex-start; flex-direction: column; gap: 8px; }
   .calendarGrid { grid-template-columns: 1fr; gap: 12px; }
   .monthCard { min-height: 282px; padding: 18px 20px; }
@@ -535,4 +619,16 @@ button.day:hover { box-shadow: inset 0 0 0 1px #bba8ae; }
     backdrop-filter: blur(2px);
   }
   .footer nav { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yearSwitch,
+  .settingsButton { transition: none; }
+  .yearSwitch:hover,
+  .settingsButton:hover { transform: none; }
+  .yearCanvasForward,
+  .yearCanvasBackward { animation: none; }
+  .settingsMenu { transition: none; }
+  :global(::view-transition-old(year-calendar)),
+  :global(::view-transition-new(year-calendar)) { animation: none; }
 }

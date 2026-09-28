@@ -8,6 +8,16 @@ export function ChevronRight({ size = 16, className }: IconProps) {
   );
 }
 
+export function SettingsIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 14v6M16 4v6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <circle cx="8" cy="17" r="2" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="16" cy="7" r="2" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
 export function CloseIcon({ size = 18, className }: IconProps) {
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   FORECAST_2028_SOURCE,
@@ -16,7 +16,7 @@ import {
   effectiveHolidayDates,
 } from "@/lib/planner/build-break-plans";
 import type { BreakPlan, DateString } from "@/lib/planner/types";
-import { ExternalLinkIcon } from "./icons";
+import { ChevronRight, ExternalLinkIcon, SettingsIcon } from "./icons";
 import { MonthCard } from "./month-card";
 import styles from "./planner.module.css";
 
@@ -76,6 +76,7 @@ function PlannerHeader({
   year,
   schoolOverlay,
   saturdayPolicy,
+  recommendationLocked,
   onYearChange,
   onSchoolOverlayChange,
   onSaturdayPolicyChange,
@@ -83,10 +84,60 @@ function PlannerHeader({
   year: SupportedYear;
   schoolOverlay: boolean;
   saturdayPolicy: boolean;
+  recommendationLocked: boolean;
   onYearChange: (year: SupportedYear) => void;
   onSchoolOverlayChange: (checked: boolean) => void;
   onSaturdayPolicyChange: (checked: boolean) => void;
 }) {
+  const [settingsMounted, setSettingsMounted] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+  const settingsButtonRef = useRef<HTMLButtonElement>(null);
+  const settingsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nextYear: SupportedYear = year === 2027 ? 2028 : 2027;
+
+  const clearSettingsTimer = useCallback(() => {
+    if (settingsTimer.current) clearTimeout(settingsTimer.current);
+    settingsTimer.current = null;
+  }, []);
+
+  const openSettings = () => {
+    clearSettingsTimer();
+    setSettingsMounted(true);
+    requestAnimationFrame(() => setSettingsOpen(true));
+  };
+
+  const closeSettings = useCallback((restoreFocus = false) => {
+    clearSettingsTimer();
+    setSettingsOpen(false);
+    settingsTimer.current = setTimeout(() => {
+      setSettingsMounted(false);
+      settingsTimer.current = null;
+    }, 150);
+    if (restoreFocus) settingsButtonRef.current?.focus();
+  }, [clearSettingsTimer]);
+  const closeSettingsFromEffect = useEffectEvent((restoreFocus = false) => {
+    closeSettings(restoreFocus);
+  });
+
+  useEffect(() => {
+    if (!settingsMounted) return;
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!settingsRef.current?.contains(event.target as Node)) closeSettingsFromEffect();
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeSettingsFromEffect(true);
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [settingsMounted]);
+
+  useEffect(() => () => clearSettingsTimer(), [clearSettingsTimer]);
+
   return (
     <>
       <header className={styles.header}>
@@ -99,52 +150,76 @@ function PlannerHeader({
           </div>
         </div>
 
-        <div className={styles.controls} aria-label="Planner settings" role="group">
-          <div className={styles.yearTabs} aria-label="Year" role="group">
-            {([2027, 2028] as const).map((option) => (
-              <button
-                className={`${styles.yearTab} ${year === option ? styles.yearTabActive : ""}`}
-                key={option}
-                type="button"
-                aria-pressed={year === option}
-                onClick={() => onYearChange(option)}
+        <div className={styles.controls} aria-label="Planner controls" role="group">
+          <button
+            className={styles.yearSwitch}
+            type="button"
+            aria-label={`Show ${nextYear} calendar`}
+            onClick={() => onYearChange(nextYear)}
+          >
+            {year === 2028 ? <ChevronRight className={styles.chevronLeft} /> : null}
+            <span>{year}</span>
+            {year === 2027 ? <ChevronRight /> : null}
+          </button>
+
+          <div className={styles.settingsShell} ref={settingsRef}>
+            <button
+              ref={settingsButtonRef}
+              className={styles.settingsButton}
+              type="button"
+              disabled={recommendationLocked}
+              aria-expanded={settingsOpen}
+              aria-controls={settingsMounted ? "planner-settings" : undefined}
+              onClick={() => (settingsOpen ? closeSettings() : openSettings())}
+            >
+              <SettingsIcon />
+              <span>Settings</span>
+            </button>
+
+            {settingsMounted ? (
+              <div
+                id="planner-settings"
+                className={`${styles.settingsMenu} ${settingsOpen ? styles.settingsMenuOpen : styles.settingsMenuClosing}`}
+                aria-label="Planner settings"
+                role="group"
               >
-                {option}
-              </button>
-            ))}
+                <Toggle
+                  checked={schoolOverlay}
+                  disabled={year === 2028}
+                  label="School breaks"
+                  description={
+                    year === 2028
+                      ? "Unavailable until MOE publishes official 2028 dates."
+                      : "Show official MOE school break dates."
+                  }
+                  onChange={onSchoolOverlayChange}
+                />
+                <Toggle
+                  checked={saturdayPolicy}
+                  label="Saturday PH → Monday"
+                  description="Use only if your workplace grants Monday off after a Saturday public holiday."
+                  onChange={onSaturdayPolicyChange}
+                />
+              </div>
+            ) : null}
           </div>
-          <Toggle
-            checked={schoolOverlay}
-            disabled={year === 2028}
-            label="School breaks"
-            description={
-              year === 2028
-                ? "Unavailable until MOE publishes official 2028 dates."
-                : "Show official MOE school break dates."
-            }
-            onChange={onSchoolOverlayChange}
-          />
-          <Toggle
-            checked={saturdayPolicy}
-            label="Saturday PH → Monday"
-            description="Use only if your workplace grants Monday off after a Saturday public holiday."
-            onChange={onSaturdayPolicyChange}
-          />
         </div>
       </header>
-
-      {year === 2028 ? (
-        <aside className={styles.notice} aria-label="2028 forecast notice">
-          <div>
-            <strong>2028 dates are a forecast.</strong> Fixed dates are reliable; lunar and religious
-            dates stay provisional until MOM confirms them.
-          </div>
-          <a href={FORECAST_2028_SOURCE} target="_blank" rel="noreferrer">
-            Forecast source <ExternalLinkIcon />
-          </a>
-        </aside>
-      ) : null}
     </>
+  );
+}
+
+function ForecastNotice() {
+  return (
+    <aside className={styles.notice} aria-label="2028 forecast notice">
+      <div>
+        <strong>2028 dates are a forecast.</strong> Fixed dates are reliable; lunar and religious
+        dates stay provisional until MOM confirms them.
+      </div>
+      <a href={FORECAST_2028_SOURCE} target="_blank" rel="noreferrer">
+        Forecast source <ExternalLinkIcon />
+      </a>
+    </aside>
   );
 }
 
@@ -186,6 +261,7 @@ export function Planner({ initialYear }: PlannerProps) {
   const [hoveredPlanId, setHoveredPlanId] = useState<string | null>(null);
   const [lockedPlanId, setLockedPlanId] = useState<string | null>(null);
   const [anchorDate, setAnchorDate] = useState<DateString | null>(null);
+  const [yearDirection, setYearDirection] = useState<"forward" | "backward" | "idle">("idle");
   const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressedFocusPreviewDate = useRef<DateString | null>(null);
 
@@ -328,12 +404,35 @@ export function Planner({ initialYear }: PlannerProps) {
   };
 
   const changeYear = (nextYear: SupportedYear) => {
-    setYear(nextYear);
-    setSchoolOverlay(false);
-    closePlan();
-    const url = new URL(window.location.href);
-    url.searchParams.set("year", String(nextYear));
-    window.history.replaceState({}, "", url);
+    if (nextYear === year) return;
+    const direction = nextYear > year ? "forward" : "backward";
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const documentWithTransitions = document as Document & {
+      startViewTransition?: (callback: () => void | Promise<void>) => { finished: Promise<void> };
+    };
+    const canUseViewTransition = !reducedMotion && Boolean(documentWithTransitions.startViewTransition);
+    const updateYear = () => {
+      setYearDirection(canUseViewTransition ? "idle" : direction);
+      setYear(nextYear);
+      setSchoolOverlay(false);
+      closePlan();
+      const url = new URL(window.location.href);
+      url.searchParams.set("year", String(nextYear));
+      window.history.replaceState({}, "", url);
+    };
+
+    if (canUseViewTransition && documentWithTransitions.startViewTransition) {
+      document.documentElement.dataset.yearDirection = direction;
+      const transition = documentWithTransitions.startViewTransition(() => {
+        updateYear();
+        return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      });
+      transition.finished.finally(() => {
+        delete document.documentElement.dataset.yearDirection;
+      });
+    } else {
+      updateYear();
+    }
   };
 
   useEffect(() => {
@@ -370,6 +469,7 @@ export function Planner({ initialYear }: PlannerProps) {
           year={year}
           schoolOverlay={schoolOverlay}
           saturdayPolicy={saturdayPolicy}
+          recommendationLocked={Boolean(lockedPlanId)}
           onYearChange={changeYear}
           onSchoolOverlayChange={setSchoolOverlay}
           onSaturdayPolicyChange={(next) => {
@@ -378,37 +478,43 @@ export function Planner({ initialYear }: PlannerProps) {
           }}
         />
 
-        <section className={styles.calendarSection} aria-label={`${year} calendar`}>
-          <div className={styles.calendarGrid}>
-            {MONTHS.map((month, monthIndex) => (
-              <MonthCard
-                key={month}
-                month={month}
-                monthIndex={monthIndex}
-                year={year}
-                yearHolidays={yearData.holidays}
-                holidayDates={holidayDates}
-                plansByDate={plansByDate}
-                activePlan={activePlan}
-                alternatives={alternatives}
-                activeRange={activeRange}
-                activeLeave={activeLeave}
-                suggestedLeaveDates={suggestedLeaveDates}
-                schoolDates={schoolDates}
-                anchorDate={anchorDate}
-                lockedPlanId={lockedPlanId}
-                previewDate={previewDate}
-                lockDate={lockDate}
-                scheduleClear={scheduleClear}
-                cancelClear={cancelClear}
-                closePlan={closePlan}
-                chooseAlternative={chooseAlternative}
-              />
-            ))}
-          </div>
-        </section>
+        <div
+          key={year}
+          className={`${styles.yearCanvas} ${yearDirection === "forward" ? styles.yearCanvasForward : yearDirection === "backward" ? styles.yearCanvasBackward : ""}`}
+        >
+          {year === 2028 ? <ForecastNotice /> : null}
+          <section className={styles.calendarSection} aria-label={`${year} calendar`}>
+            <div className={styles.calendarGrid}>
+              {MONTHS.map((month, monthIndex) => (
+                <MonthCard
+                  key={month}
+                  month={month}
+                  monthIndex={monthIndex}
+                  year={year}
+                  yearHolidays={yearData.holidays}
+                  holidayDates={holidayDates}
+                  plansByDate={plansByDate}
+                  activePlan={activePlan}
+                  alternatives={alternatives}
+                  activeRange={activeRange}
+                  activeLeave={activeLeave}
+                  suggestedLeaveDates={suggestedLeaveDates}
+                  schoolDates={schoolDates}
+                  anchorDate={anchorDate}
+                  lockedPlanId={lockedPlanId}
+                  previewDate={previewDate}
+                  lockDate={lockDate}
+                  scheduleClear={scheduleClear}
+                  cancelClear={cancelClear}
+                  closePlan={closePlan}
+                  chooseAlternative={chooseAlternative}
+                />
+              ))}
+            </div>
+          </section>
 
-        <PlannerLegend year={year} schoolOverlay={schoolOverlay} />
+          <PlannerLegend year={year} schoolOverlay={schoolOverlay} />
+        </div>
         <PlannerFooter />
       </div>
 
