@@ -1,0 +1,7 @@
+{
+  "approved": true,
+  "composition": "Warm editorial year wall",
+  "approvedBy": "User approval followed by a refinement to black typography and neutral toggles",
+  "approvedAt": "2026-09-28",
+  "implementationNote": "The built UI preserves the approved font, spacing, card shapes, and semantic colour accents while using black instead of plum for default text."
+}

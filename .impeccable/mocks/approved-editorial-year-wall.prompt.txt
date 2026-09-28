@@ -1,0 +1,13 @@
+Use case: ui-mockup
+Asset type: responsive visual concept for an existing Singapore annual leave planning website
+Primary request: Design a high-fidelity concept for “Long Weekend SG” that translates the supplied references’ warm editorial mobile-app aesthetic into a dense, practical annual calendar website. The references are style references only; do not copy their cooking content, voice controls, wording, or phone frames.
+Product structure to preserve: one page; large title “Long Weekend SG”; controls for 2027 / 2028, School breaks, and Saturday PH → Monday; twelve month cards in a four-column desktop year wall; public holiday dates; suggested leave marks; one active recommendation showing “Take 2 leave days → 5 days off”; official/provisional status; minimal visible explanatory copy.
+Style: polished warm contemporary editorial interface. Pair a refined expressive serif for the product title, month names, and recommendation headline with a clean quiet sans-serif for controls and calendar numerals. Use generous white space, a soft paper-like ivory canvas, thin warm-grey rules, broad rounded corners, tactile white surfaces, and restrained shadows.
+Composition: landscape desktop interface, approximately 16:10, showing the entire twelve-month wall. The first viewport remains an operating tool, not a marketing landing page.
+Palette: warm ivory and white base; deep aubergine/plum for official holidays and one recommendation panel; muted marigold for suggested leave; olive for optional school breaks; a small persimmon accent. Use colour semantically, not as random month-card decoration.
+Key interaction: March is active. Highlight a continuous five-day break across its calendar cells and show a compact saturated plum recommendation panel beside it, with large serif wording “Take 2 leave days” and “5 days off”.
+Constraints: preserve Monday-first calendar legibility; white cards stay dominant; accessible contrast; no gradients, illustrations, photos, travel motifs, voice controls, microphone icons, dark full-page background, excess subtext, dashboard metrics, fake logos, or watermark.
+
+Targeted revision: Remove only the small tagline beside “Long Weekend SG”. Preserve the title, editorial serif typography, calendar layout, warm ivory and white palette, plum recommendation panel, month cards, controls, mobile inset, dimensions, and all other text. Do not add replacement copy.
+
+Implementation refinement from user feedback: default typography and controls use black/charcoal, not plum. All toggles share the same neutral treatment. Plum, marigold, olive, and persimmon appear only as meaningful calendar or recommendation accents.

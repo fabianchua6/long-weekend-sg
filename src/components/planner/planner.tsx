@@ -187,6 +187,7 @@ export function Planner({ initialYear }: PlannerProps) {
   const [lockedPlanId, setLockedPlanId] = useState<string | null>(null);
   const [anchorDate, setAnchorDate] = useState<DateString | null>(null);
   const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressedFocusPreviewDate = useRef<DateString | null>(null);
 
   const yearData = YEAR_DATA[year];
 
@@ -279,7 +280,11 @@ export function Planner({ initialYear }: PlannerProps) {
     clearTimer.current = setTimeout(() => setHoveredPlanId(null), 120);
   };
 
-  const previewDate = (date: DateString) => {
+  const previewDate = (date: DateString, source: "focus" | "pointer") => {
+    if (source === "focus" && suppressedFocusPreviewDate.current === date) {
+      suppressedFocusPreviewDate.current = null;
+      return;
+    }
     cancelClear();
     const bestPlan = plansByDate.get(date)?.[0];
     if (!bestPlan) return;
@@ -309,6 +314,7 @@ export function Planner({ initialYear }: PlannerProps) {
     setLockedPlanId(null);
     setAnchorDate(null);
     if (dateToRestore) {
+      suppressedFocusPreviewDate.current = dateToRestore;
       requestAnimationFrame(() => {
         document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus();
       });
@@ -340,6 +346,7 @@ export function Planner({ initialYear }: PlannerProps) {
       setLockedPlanId(null);
       setAnchorDate(null);
       if (dateToRestore) {
+        suppressedFocusPreviewDate.current = dateToRestore;
         requestAnimationFrame(() => {
           document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus();
         });

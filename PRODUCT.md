@@ -37,7 +37,7 @@ The primary view is twelve individual month cards. The launch covers official 20
 
 ## Brand Commitments
 
-The product name is “Long Weekend SG”. The voice is friendly and lightly Singaporean while factual caveats remain precise. The visual world is clean and minimal: a soft white page, white month cards, quiet grey borders, black typography, and a restrained red-and-blue status system. The calendar interaction—not themed decoration—is the memorable element. Avoid dark grounds, airport theming, heavy chrome, tactile props, and visually busy presentation.
+The product name is “Long Weekend SG”. The voice is friendly and lightly Singaporean while factual caveats remain precise. The visual world is warm editorial minimalism: an ivory paper-like page, softly rounded white month cards, expressive serif headings, quiet sans-serif controls, and black or charcoal default typography. Plum, marigold, olive, and persimmon are sparse semantic accents for holidays, recommended leave, school breaks, and observed-day details. All controls share one neutral treatment. The calendar interaction—not themed decoration—is the memorable element. Avoid dark grounds, airport theming, voice-assistant cues, random card colours, heavy chrome, and visually busy presentation.
 
 ## Evidence on Hand
 

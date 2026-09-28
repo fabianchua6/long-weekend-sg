@@ -1,19 +1,26 @@
 :root {
-  --page: #f6f7f8;
-  --surface: #ffffff;
-  --ink: #111318;
-  --muted: #596579;
-  --faint: #5f6d81;
-  --line: #e3e7ec;
-  --line-strong: #cfd5dc;
-  --holiday: #c92f35;
-  --holiday-soft: #fff0f1;
-  --leave: #dceeff;
-  --leave-ink: #1769aa;
-  --school: #fff4dc;
-  --focus: #1769aa;
+  --page: #faf7f1;
+  --surface: #fffdf9;
+  --ink: #2f2926;
+  --muted: #756c65;
+  --faint: #8d827a;
+  --line: #e8dfd4;
+  --line-strong: #d8ccbf;
+  --plum: #6b243e;
+  --plum-deep: #552036;
+  --plum-soft: #f6e9ee;
+  --holiday: var(--plum);
+  --holiday-soft: var(--plum-soft);
+  --leave: #f5d36b;
+  --leave-soft: #fbe9ac;
+  --leave-ink: #6c4c06;
+  --school: #e5e7d2;
+  --school-ink: #66703a;
+  --persimmon: #e65319;
+  --focus: #a43a5d;
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --font-editorial: var(--font-newsreader), Georgia, serif;
 }
 
 * { box-sizing: border-box; }
@@ -22,7 +29,7 @@ html {
   min-height: 100%;
   background: var(--page);
   color-scheme: light;
-  scrollbar-color: #c8ced6 var(--page);
+  scrollbar-color: #c8b9ac var(--page);
   scroll-behavior: smooth;
 }
 
@@ -39,7 +46,7 @@ body {
 button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; text-underline-offset: 0.2em; }
-::selection { background: var(--leave); color: var(--ink); }
+::selection { background: var(--leave-soft); color: var(--ink); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {

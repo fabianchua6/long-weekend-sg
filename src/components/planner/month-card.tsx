@@ -57,7 +57,7 @@ type MonthCardProps = {
   schoolDates: Set<DateString>;
   anchorDate: DateString | null;
   lockedPlanId: string | null;
-  previewDate: (date: DateString) => void;
+  previewDate: (date: DateString, source: "focus" | "pointer") => void;
   lockDate: (date: DateString) => void;
   scheduleClear: () => void;
   cancelClear: () => void;
@@ -169,13 +169,13 @@ function DayCell(props: DayCellProps) {
           aria-pressed={props.lockedPlanId ? props.activeRange.has(date) : undefined}
           data-date={date}
           onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") props.previewDate(date);
+            if (event.pointerType === "mouse") props.previewDate(date, "pointer");
           }}
           onPointerDown={(event) => {
             if (event.button === 0) props.lockDate(date);
           }}
           onPointerLeave={props.scheduleClear}
-          onFocus={() => props.previewDate(date)}
+          onFocus={() => props.previewDate(date, "focus")}
           onBlur={props.scheduleClear}
           onClick={(event) => {
             if (event.detail === 0) props.lockDate(date);
@@ -196,7 +196,7 @@ function DayCell(props: DayCellProps) {
 function PlanSummary({ plan }: { plan: BreakPlan }) {
   return (
     <>
-      <span>{plural(plan.leaveCost, "leave day")}</span>
+      <span>Take {plural(plan.leaveCost, "leave day")}</span>
       <ChevronRight />
       <strong>{plural(plan.totalDaysOff, "day")} off</strong>
     </>

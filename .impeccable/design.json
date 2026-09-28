@@ -1,26 +1,27 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-28T02:10:00+08:00",
+  "generatedAt": "2026-09-28T15:30:00+08:00",
   "title": "Design System: Long Weekend SG",
   "extensions": {
     "colorMeta": {
-      "page": { "role": "neutral", "displayName": "Paper Grey", "canonical": "#f6f7f8", "tonalRamp": ["#202226", "#3b3e44", "#5b5f67", "#7c818b", "#a0a6af", "#c4c9cf", "#e3e7ea", "#f6f7f8"] },
-      "surface": { "role": "neutral", "displayName": "Clear White", "canonical": "#ffffff", "tonalRamp": ["#262626", "#464646", "#686868", "#8c8c8c", "#b0b0b0", "#d0d0d0", "#ececec", "#ffffff"] },
-      "ink": { "role": "neutral", "displayName": "Near Black", "canonical": "#111318", "tonalRamp": ["#111318", "#2b2e34", "#474b53", "#666b74", "#898e98", "#afb3ba", "#d5d7db", "#f1f2f3"] },
-      "holiday": { "role": "primary", "displayName": "Singapore Red", "canonical": "#c92f35", "tonalRamp": ["#3a090d", "#641219", "#8f1d24", "#b7282f", "#d84a4f", "#ea777b", "#f5aaad", "#fde4e5"] },
-      "leave-ink": { "role": "secondary", "displayName": "Planning Blue", "canonical": "#1769aa", "tonalRamp": ["#06243f", "#0a3d69", "#105891", "#2475b3", "#4c94cb", "#7fb5de", "#b7d7ed", "#e7f4fb"] }
+      "page": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#faf7f1", "tonalRamp": ["#2f2926", "#554c46", "#776d66", "#998f87", "#bcb2a9", "#d8d0c7", "#ede7df", "#faf7f1"] },
+      "surface": { "role": "neutral", "displayName": "Soft White", "canonical": "#fffdf9", "tonalRamp": ["#302b27", "#554f49", "#79726b", "#9c958e", "#beb8b1", "#ddd8d2", "#f0ece7", "#fffdf9"] },
+      "ink": { "role": "neutral", "displayName": "Charcoal Ink", "canonical": "#2f2926", "tonalRamp": ["#2f2926", "#4f4843", "#706861", "#918981", "#b1aaa2", "#d0cac3", "#e9e4de", "#faf7f1"] },
+      "holiday": { "role": "primary", "displayName": "Holiday Plum", "canonical": "#6b243e", "tonalRamp": ["#3e1024", "#552036", "#6b243e", "#8e3d5b", "#ad5c76", "#cc879b", "#e5b7c5", "#f6e9ee"] },
+      "leave": { "role": "secondary", "displayName": "Leave Marigold", "canonical": "#f5d36b", "tonalRamp": ["#5b430d", "#7c5c10", "#a47b17", "#c99c22", "#e2b94a", "#f5d36b", "#fbe9ac", "#fff7d8"] },
+      "school": { "role": "success", "displayName": "School Olive", "canonical": "#e5e7d2", "tonalRamp": ["#3f4620", "#59602f", "#747c43", "#92995e", "#afb681", "#cdd1ad", "#e5e7d2", "#f5f5e9"] }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Page title only." },
-      "body": { "displayName": "Body", "purpose": "Product copy and caveats." },
-      "calendar": { "displayName": "Calendar", "purpose": "Aligned dates and month indices." }
+      "editorial": { "displayName": "Editorial", "purpose": "Product title, month names, and recommendation exchange." },
+      "body": { "displayName": "Body", "purpose": "Controls, calendar numerals, caveats, and source links." }
     },
     "shadows": [
-      { "name": "active-card", "value": "0 9px 28px rgb(31 78 121 / 10%)", "purpose": "Temporary lift for a month containing the active plan." },
-      { "name": "recommendation", "value": "0 18px 48px rgb(16 24 40 / 18%)", "purpose": "Separates the recommendation from the year wall." }
+      { "name": "card", "value": "0 8px 24px rgb(83 59 44 / 5%)", "purpose": "Gives white month cards a gentle paper-like lift." },
+      { "name": "active-card", "value": "0 14px 36px rgb(88 35 57 / 12%)", "purpose": "Separates a month containing the active break." },
+      { "name": "recommendation", "value": "0 22px 54px rgb(72 24 45 / 26%)", "purpose": "Establishes the recommendation as the saturated focal layer." }
     ],
     "motion": [
-      { "name": "state", "value": "150ms ease", "purpose": "Small border, shadow, and position state changes; removed under reduced-motion." }
+      { "name": "state", "value": "150ms ease", "purpose": "Small border, shadow, and position transitions; removed under reduced motion." }
     ],
     "breakpoints": [
       { "name": "three-column", "value": "1220px" },
@@ -33,36 +34,36 @@
       "name": "Month Card",
       "kind": "card",
       "refersTo": "month-card",
-      "description": "Flat white calendar surface with interaction-only elevation.",
+      "description": "Warm-white editorial calendar surface with a black serif month name.",
       "html": "<article class=\"ds-month-card\"><strong>March</strong><span>03</span></article>",
-      "css": ".ds-month-card{display:flex;justify-content:space-between;min-height:180px;padding:16px;border:1px solid #e3e7ec;border-radius:12px;background:#fff;color:#111318;font-family:Geist,sans-serif}.ds-month-card:hover{border-color:#a8caea;box-shadow:0 9px 28px rgb(31 78 121 / 10%)}.ds-month-card:focus-visible{outline:2px solid #1769aa;outline-offset:3px}.ds-month-card span{color:#5f6d81;font-family:'Geist Mono',monospace;font-size:11px}"
+      "css": ".ds-month-card{display:flex;justify-content:space-between;min-height:180px;padding:17px;border:1px solid #e8dfd4;border-radius:20px;background:#fffdf9;color:#2f2926;box-shadow:0 8px 24px rgb(83 59 44 / 5%)}.ds-month-card strong{font:530 23px Newsreader,Georgia,serif}.ds-month-card:focus-visible{outline:2px solid #a43a5d;outline-offset:3px}"
     },
     {
       "name": "Holiday Day",
       "kind": "button",
       "refersTo": "holiday-day",
-      "description": "Official holiday marker.",
+      "description": "Official holiday marker and primary semantic plum accent.",
       "html": "<button class=\"ds-holiday\" aria-label=\"Public holiday\">9</button>",
-      "css": ".ds-holiday{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:50%;background:#c92f35;color:#fff;font:700 11px 'Geist Mono',monospace}.ds-holiday:hover{filter:brightness(.94)}.ds-holiday:focus-visible{outline:2px solid #1769aa;outline-offset:3px}"
+      "css": ".ds-holiday{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:50%;background:#6b243e;color:#fffaf6;font:760 11px Geist,sans-serif}.ds-holiday:focus-visible{outline:2px solid #a43a5d;outline-offset:3px}"
     },
     {
-      "name": "Leave Day",
-      "kind": "button",
-      "refersTo": "leave-day",
-      "description": "Selected leave date within an active break.",
-      "html": "<button class=\"ds-leave\" aria-label=\"Suggested leave day\">8</button>",
-      "css": ".ds-leave{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:7px;background:#dceeff;color:#1769aa;box-shadow:inset 0 0 0 1px #83b8e2;font:700 11px 'Geist Mono',monospace}.ds-leave:hover{background:#cfe7fc}.ds-leave:focus-visible{outline:2px solid #1769aa;outline-offset:3px}"
+      "name": "Recommendation Panel",
+      "kind": "card",
+      "refersTo": "plan-popover",
+      "description": "The single saturated editorial layer that explains the leave-to-rest tradeoff.",
+      "html": "<section class=\"ds-plan\"><strong>Take 2 leave days → 5 days off</strong></section>",
+      "css": ".ds-plan{padding:22px;border:1px solid #7c3850;border-radius:20px;background:#552036;color:#fff9f5;box-shadow:0 22px 54px rgb(72 24 45 / 26%)}.ds-plan strong{font:520 36px/1 Newsreader,Georgia,serif}"
     }
   ],
   "narrative": {
-    "northStar": "The Clear Year Wall",
-    "overview": "A calm, useful annual planning wall where neutral surfaces make the calendar easy to scan and color appears only when it explains meaning.",
-    "keyCharacteristics": ["Dense but breathable year overview", "Meaningful red and blue accents", "Flat at rest", "Explicit official and forecast states"],
+    "northStar": "The Editorial Year Wall",
+    "overview": "A warm, typographic annual planning wall where black carries the interface and sparse colour explains calendar meaning.",
+    "keyCharacteristics": ["Black editorial typography", "Warm paper surfaces", "Meaningful colour pops", "Dense but tactile year overview"],
     "rules": [
-      { "name": "Meaningful Color", "body": "Every non-neutral hue communicates a calendar state.", "section": "colors" },
-      { "name": "Flat by Default", "body": "Shadows appear only as a response to interaction.", "section": "elevation" }
+      { "name": "Black First", "body": "Default text and controls remain black or charcoal; plum is not a heading colour.", "section": "colors" },
+      { "name": "Meaningful Colour", "body": "Every non-neutral hue maps to holiday, leave, school, observed, or forecast status.", "section": "colors" }
     ],
-    "dos": ["Keep the year wall primary", "Use concise caveats", "Preserve keyboard and tap access"],
-    "donts": ["Do not reintroduce airport theming", "Do not add decorative gradients", "Do not hide forecast status"]
+    "dos": ["Keep the whole year primary", "Use Newsreader only for editorial moments", "Preserve keyboard and tap access"],
+    "donts": ["Do not tint all headings plum", "Do not colour toggles by category", "Do not add voice-assistant or airport motifs"]
   }
 }

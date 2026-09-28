@@ -9,11 +9,11 @@ related_targets: []
 
 - **Mode and job:** Operate. Singapore Monday–Friday workers scan one year and discover which leave days create longer continuous breaks.
 - **Scope:** One public route with official 2027 data, provisional 2028 data, optional 2027 MOE school overlay, and an explicit Saturday-policy switch. No persistence, sharing, export, account, booking, or destination content.
-- **Direction:** Clean white year wall. Soft off-white page, twelve white month cards, quiet grey rules, near-black type, restrained red public-holiday marks, and pale blue leave highlights. No theme, props, dark grounds, gradients, or decorative imagery.
-- **Memorable moment:** Hover, focus, or tap a holiday or suggested bridge day; its complete break illuminates across the calendar and a compact white popover states the leave-to-rest exchange with two alternatives.
+- **Direction:** Warm editorial year wall. Ivory page, twelve softly rounded white month cards, quiet warm-grey rules, black typography, refined serif headings, and sparse plum, marigold, olive, and persimmon accents whose meaning is fixed. No props, dark grounds, gradients, decorative imagery, random card colours, or voice-assistant cues.
+- **Memorable moment:** Hover, focus, or tap a holiday or suggested bridge day; its complete break illuminates in marigold across the calendar and a compact plum editorial panel states the leave-to-rest exchange with two alternatives.
 - **Responsive behavior:** Four cards across on wide desktop, two on tablet, one on phone. Hover becomes tap; recommendation details become a bottom sheet on small screens.
-- **Approved comp:** `.impeccable/mocks/approved-white-year-wall.png`. Treat generated dates and labels as compositional placeholders; implementation uses verified datasets and accessible semantic controls.
-- **Component grammar:** 12px card corners, 1px cool-grey borders, no default shadow, a soft elevated shadow only for active cards and popovers, compact tabular date numerals, pill-shaped day highlights, and 2px accessible focus rings.
-- **Type ramp:** Geist Sans; 36–44px product title, 18–20px month names, 13–15px controls/body, 11–12px date and source labels.
-- **Palette:** page `#f6f7f8`, card `#ffffff`, text `#111318`, muted `#667085`, border `#e3e7ec`, public holiday `#e5383b`, leave `#dceeff`, leave ink `#1769aa`, school `#fff0f1`.
+- **Approved comp:** `.impeccable/mocks/approved-editorial-year-wall.png`. Treat generated dates and labels as compositional placeholders; implementation uses verified datasets and accessible semantic controls. User feedback after approval makes black/charcoal the default text and control colour.
+- **Component grammar:** 20px card corners, 1px warm-grey borders, low warm shadows, compact tabular date numerals, softly joined range highlights, neutral pill controls, and 2px accessible focus rings.
+- **Type ramp:** Newsreader for the 54–86px product title, 22–26px month names, and 29–38px recommendation headline; Geist Sans for 12–15px controls, calendar numerals, and source labels.
+- **Palette:** page `#faf7f1`, card `#fffdf9`, text `#2f2926`, muted `#756c65`, border `#e8dfd4`, public holiday `#6b243e`, leave `#f5d36b`, school `#e5e7d2`, observed accent `#e65319`.
 - **Implementation inventory:** all interface content, calendar geometry, marks, popover, switches, and icons are semantic HTML/CSS or authored inline SVG. No shipping raster assets are required; the comp remains review evidence only.

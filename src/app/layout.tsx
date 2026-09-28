@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +10,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -41,17 +47,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
+    >
       <body>
         {/*
-          THESIS: The whole year is the interface; no marketing hero or themed dashboard stands between a person and the calendar.
-          OWN-WORLD: Soft white ground, white month cards, cool-grey rules, near-black type, restrained red holidays, and pale-blue leave paths.
-          STORY: Scan twelve months, touch one promising date, see the entire break illuminate, and understand the leave-to-rest exchange.
-          FIRST VIEWPORT: Compact title and controls above a dense four-by-three year wall; one active card lifts and its white recommendation popover overlaps the grid.
-          FORM: User-pinned clean white year wall; concept seed 4c1b00a8.
+          THESIS: The annual planning wall feels like a considered travel magazine spread, never an HR dashboard.
+          OWN-WORLD: Warm ivory paper, softly raised white cards, deep plum holidays, marigold leave paths, olive school breaks, and an expressive editorial serif paired with a quiet sans.
+          STORY: Scan the whole year, choose a promising date, then follow the colored break path to a rich plum recommendation that makes the leave tradeoff immediate.
+          FIRST VIEWPORT: Oversized serif brand on the left, compact warm pill controls on the right, and a dense four-column year wall below.
+          FORM: User-approved warm editorial year wall; concept seed 8e92029a.
           FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
         */}
-        <span data-design-contract="4c1b00a8" hidden />
+        <span data-design-contract="8e92029a" hidden />
         {children}
       </body>
     </html>
