@@ -225,7 +225,6 @@ function PlannerLegend({ year, schoolOverlay }: { year: SupportedYear; schoolOve
       <span><i className={styles.legendHoliday} />Public holiday</span>
       <span><i className={styles.legendPotential} />Potential break</span>
       <span><i className={styles.legendLeave} />Suggested leave</span>
-      <span><i className={styles.legendWeekend} />Weekend</span>
       {schoolOverlay ? <span><i className={styles.legendSchool} />School break</span> : null}
       {year === 2028 ? <span><i className={styles.legendForecast} />Forecast date</span> : null}
     </section>

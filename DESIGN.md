@@ -141,7 +141,7 @@ The workspace is flat by default. The month map has no card borders and no defau
 
 ## Shapes
 
-Day cells use small 5–6px corners. Holiday dates are circular. Range fills join across adjacent cells with rounded ends. Controls use an 8px radius; the settings menu uses a 12px radius; the mobile sheet uses a 20px top radius. Month cards remain borderless and transparent.
+Holiday dates and range endpoints are circular. Borderless range fills connect the centers of the endpoint dates and continue with flat edges across week and month boundaries. Week rows have breathing space; weekends use muted numerals instead of filled columns. Controls use an 8px radius; the settings menu uses a 12px radius; the mobile sheet uses a 20px top radius. Month cards remain borderless and transparent.
 
 ## Components
 
@@ -174,7 +174,7 @@ Day cells use small 5–6px corners. Holiday dates are circular. Range fills joi
 
 ### Calendar Day
 
-The day is the primary interactive unit. It supports hover, keyboard focus, click, and tap. Official holidays use a solid orange circle; forecast holidays keep a white center and orange outline; suggested leave uses a small blue marker; an active plan joins its range across every affected month.
+The day is the primary interactive unit. It supports hover, keyboard focus, click, and tap. Official holidays use a solid orange circle; forecast holidays keep a white center and orange outline; suggested leave uses a small blue marker; an active plan joins its range across every affected month. Potential breaks use a pale filled band with distinct endpoint circles, following the range hierarchy in Adobe React Aria and shadcn Calendar. Forecast bands retain a dashed lower edge. Endpoints do not override holiday meaning.
 
 ### Recommendation Details
 

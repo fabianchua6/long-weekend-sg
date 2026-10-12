@@ -45,10 +45,9 @@
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 .legendHoliday { border-radius: 50% !important; background: var(--holiday); }
-.legend .legendPotential { width: 22px; height: 12px; border-radius: 999px; background: var(--potential-break); border: 1px solid #a9c5df; }
+.legend .legendPotential { width: 22px; height: 12px; border-radius: 999px; background: var(--range-endpoint); }
 .legendLeave { position: relative; background: transparent; }
 .legendLeave::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: #6d97bd; }
-.legendWeekend { background: #e9ebef; }
 .legendSchool { background: var(--school); }
 .legendForecast { border: 1.5px solid var(--holiday); border-radius: 50% !important; }
 .calendarGrid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 24px 32px; }
@@ -57,19 +56,15 @@
 .monthHeader h2 { margin: 0; font-family: var(--font-editorial); font-size: 1.28rem; font-weight: 520; line-height: 1.2; letter-spacing: -.015em; }
 .monthCardActive .monthHeader h2 { text-decoration: underline; text-decoration-color: var(--leave); text-underline-offset: 5px; text-decoration-thickness: 3px; }
 .weekdays, .days { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); }
+.days { --range-size: 26px; row-gap: 3px; }
 .weekdays { margin-bottom: 7px; color: var(--muted); font-size: .62rem; text-align: center; }
 .daySlot, .emptyDay { display: grid; place-items: center; height: 28px; min-width: 0; }
 .daySlot { position: relative; }
-.daySlot[data-range]::before { content: ""; position: absolute; inset: 0; background: var(--potential-break); border-block: 1px solid #a9c5df; pointer-events: none; }
-.daySlot[data-range-start]::before { border-start-start-radius: 999px; border-end-start-radius: 999px; border-inline-start: 1px solid #a9c5df; }
-.daySlot[data-range-end]::before { border-start-end-radius: 999px; border-end-end-radius: 999px; border-inline-end: 1px solid #a9c5df; }
-.daySlot[data-range-continues-before]::before { border-start-start-radius: 0; border-end-start-radius: 0; border-inline-start-width: 0; }
-.daySlot[data-range-continues-after]::before { border-start-end-radius: 0; border-end-end-radius: 0; border-inline-end-width: 0; }
-.daySlot[data-range="selected"]::before { background: var(--leave-soft); border-color: #6d97bd; }
-.daySlot[data-range-forecast]::before { border-style: dashed; border-inline-width: 0; }
-.daySlot[data-range-forecast][data-range-start]::before { border-inline-start-width: 1px; }
-.daySlot[data-range-forecast][data-range-end]::before { border-inline-end-width: 1px; }
-.daySlot:nth-child(7n), .daySlot:nth-child(7n - 1) { background: var(--subtle); }
+.daySlot[data-range]::before { content: ""; position: absolute; inset: 50% 0 auto; height: var(--range-size); transform: translateY(-50%); background: var(--potential-break); pointer-events: none; }
+.daySlot[data-range-start]::before { inset-inline-start: 50%; }
+.daySlot[data-range-end]::before { inset-inline-end: 50%; }
+.daySlot[data-range="selected"]::before { background: var(--leave-soft); }
+.daySlot[data-range-forecast]::before { border-bottom: 1px dashed #7f9ab1; }
 .day { position: relative; display: grid; width: 100%; max-width: 34px; height: 28px; place-items: center; border: 0; border-radius: 5px; background: transparent; color: var(--ink); font-size: .7rem; font-variant-numeric: tabular-nums; line-height: 1; isolation: isolate; }
 button.day { cursor: pointer; }
 button.day:hover { box-shadow: inset 0 0 0 1px #a5b7c9; }
@@ -77,18 +72,20 @@ button.day:focus-visible { z-index: 2; }
 button.day[aria-pressed="true"] { outline: 1px solid var(--ink); outline-offset: 2px; z-index: 1; }
 button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus); }
 .schoolDay { background: var(--school); }
+.weekend { color: var(--muted); }
+.daySlot[data-range] .day { width: var(--range-size); max-width: 100%; height: var(--range-size); border-radius: 50%; color: var(--ink); }
+.daySlot:is([data-range-start], [data-range-end]) .day { background: var(--range-endpoint); font-weight: 600; }
 .suggestedDay::after { content: ""; position: absolute; bottom: 1px; width: 3px; height: 3px; border-radius: 50%; background: #6d97bd; }
 .rangeDay { background: transparent; }
 .activeLeaveDay { background: var(--leave); font-weight: 650; }
-.daySlot[data-range-start] .activeLeaveDay { border-start-start-radius: 999px; border-end-start-radius: 999px; }
-.daySlot[data-range-end] .activeLeaveDay { border-start-end-radius: 999px; border-end-end-radius: 999px; }
-.daySlot[data-range-continues-before] .activeLeaveDay { border-start-start-radius: 0; border-end-start-radius: 0; }
-.daySlot[data-range-continues-after] .activeLeaveDay { border-start-end-radius: 0; border-end-end-radius: 0; }
+.daySlot[data-range="selected"] .activeLeaveDay { background: var(--leave); }
 .activeLeaveDay::after { display: none; }
 .holidayDay, .observedDay { width: 27px; height: 27px; border-radius: 50%; background: var(--holiday); color: #fff; font-weight: 600; }
+.daySlot[data-range] :is(.holidayDay, .observedDay) { background: var(--holiday); color: #fff; }
 .observedDay::after { content: ""; position: absolute; right: 0; bottom: 0; width: 5px; height: 5px; border: 1px solid #fff; border-radius: 50%; background: var(--ink); }
 .forecastHoliday { background: var(--surface); color: var(--holiday); box-shadow: inset 0 0 0 1.5px var(--holiday); }
 .forecastHoliday.rangeDay { background: var(--holiday-soft); }
+.daySlot[data-range] .forecastHoliday { background: var(--surface); color: var(--holiday); }
 .detailsPanel { position: sticky; top: 0; min-height: calc(100vh - 72px); max-height: 100dvh; overflow-y: auto; padding: 36px 24px; background: #f7f8fa; border-left: 1px solid var(--line); }
 .panelTitle { margin: 0 30px 26px 0; font-family: var(--font-editorial); font-size: 1.9rem; font-weight: 500; letter-spacing: -.025em; line-height: 1.15; }
 .planHeadline { font-size: clamp(2.2rem,3.15vw,3.4rem); font-weight: 560; line-height: 1.1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
@@ -128,6 +125,7 @@ button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus);
 .emptyPanel .panelTitle { color: var(--ink); margin-bottom: 12px; }
 .emptyPanel p { line-height: 1.6; }
 @media (min-width: 1600px) {
+  .days { --range-size: 30px; }
   .workspace { grid-template-columns: minmax(0,1fr) 360px; }
   .yearCanvas { padding: 28px 40px 18px; }
   .calendarGrid { gap: 36px 46px; }
@@ -146,6 +144,7 @@ button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus);
   .calendarGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 760px) {
+  .days { --range-size: 32px; row-gap: 0; }
   .yearSwitch, .settingsButton { min-height: 44px; }
   .header { flex-wrap: wrap; gap: 14px; padding: 18px 22px 12px; }
   .titleLine h1 { font-size: 1.9rem; }
@@ -180,6 +179,7 @@ button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus);
   .footer { font-size: .63rem; }
 }
 @media (max-width: 520px) {
+  .days { --range-size: 36px; }
   .calendarGrid { grid-template-columns: 1fr; gap: 35px; --date-hit-width: calc((100vw - 44px) / 7); }
   .monthHeader h2 { font-size: 1.5rem; }
   .daySlot, .emptyDay { height: 44px; }
