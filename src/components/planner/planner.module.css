@@ -45,6 +45,7 @@
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 .legendHoliday { border-radius: 50% !important; background: var(--holiday); }
+.legend .legendPotential { width: 22px; height: 12px; border-radius: 999px; background: var(--potential-break); border: 1px solid #a9c5df; }
 .legendLeave { position: relative; background: transparent; }
 .legendLeave::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: #6d97bd; }
 .legendWeekend { background: #e9ebef; }
@@ -58,6 +59,14 @@
 .weekdays, .days { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); }
 .weekdays { margin-bottom: 7px; color: var(--muted); font-size: .62rem; text-align: center; }
 .daySlot, .emptyDay { display: grid; place-items: center; height: 28px; min-width: 0; }
+.daySlot { position: relative; }
+.daySlot[data-range]::before { content: ""; position: absolute; inset: 0; background: var(--potential-break); border-block: 1px solid #a9c5df; pointer-events: none; }
+.daySlot[data-range-start]::before { border-start-start-radius: 999px; border-end-start-radius: 999px; border-inline-start: 1px solid #a9c5df; }
+.daySlot[data-range-end]::before { border-start-end-radius: 999px; border-end-end-radius: 999px; border-inline-end: 1px solid #a9c5df; }
+.daySlot[data-range="selected"]::before { background: var(--leave-soft); border-color: #6d97bd; }
+.daySlot[data-range-forecast]::before { border-style: dashed; border-inline-width: 0; }
+.daySlot[data-range-forecast][data-range-start]::before { border-inline-start-width: 1px; }
+.daySlot[data-range-forecast][data-range-end]::before { border-inline-end-width: 1px; }
 .daySlot:nth-child(7n), .daySlot:nth-child(7n - 1) { background: var(--subtle); }
 .day { position: relative; display: grid; width: 100%; max-width: 34px; height: 28px; place-items: center; border: 0; border-radius: 5px; background: transparent; color: var(--ink); font-size: .7rem; font-variant-numeric: tabular-nums; line-height: 1; isolation: isolate; }
 button.day { cursor: pointer; }
@@ -67,10 +76,7 @@ button.day[aria-pressed="true"] { outline: 1px solid var(--ink); outline-offset:
 button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus); }
 .schoolDay { background: var(--school); }
 .suggestedDay::after { content: ""; position: absolute; bottom: 1px; width: 3px; height: 3px; border-radius: 50%; background: #6d97bd; }
-.daySlot.rangeSlot { background: var(--leave-soft); }
-.rangeDay { background: var(--leave-soft); }
-.rangeStart { border-radius: 6px 0 0 6px; }
-.rangeEnd { border-radius: 0 6px 6px 0; }
+.rangeDay { background: transparent; }
 .activeLeaveDay { background: var(--leave); font-weight: 650; }
 .activeLeaveDay::after { display: none; }
 .holidayDay, .observedDay { width: 27px; height: 27px; border-radius: 50%; background: var(--holiday); color: #fff; font-weight: 600; }

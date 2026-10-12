@@ -16,7 +16,7 @@ import {
   effectiveHolidayDates,
 } from "@/lib/planner/build-break-plans";
 import type { BreakPlan, DateString } from "@/lib/planner/types";
-import { getPlanOptions, indexPlansByDate, usefulPlans } from "@/lib/planner/recommendations";
+import { featuredBreakPlans, getPlanOptions, indexPlansByDate, usefulPlans } from "@/lib/planner/recommendations";
 import { ChevronRight, ExternalLinkIcon, SettingsIcon } from "./icons";
 import { MonthCard } from "./month-card";
 import { PlanDetails } from "./plan-details";
@@ -223,6 +223,7 @@ function PlannerLegend({ year, schoolOverlay }: { year: SupportedYear; schoolOve
   return (
     <section className={styles.legend} aria-label="Calendar legend">
       <span><i className={styles.legendHoliday} />Public holiday</span>
+      <span><i className={styles.legendPotential} />Potential break</span>
       <span><i className={styles.legendLeave} />Suggested leave</span>
       <span><i className={styles.legendWeekend} />Weekend</span>
       {schoolOverlay ? <span><i className={styles.legendSchool} />School break</span> : null}
@@ -263,7 +264,9 @@ function useCalendarData(year: SupportedYear, saturdayPolicy: boolean, schoolOve
     [saturdayPolicy, year, yearData, holidayDates],
   );
 
-  const plansByDate = useMemo(() => indexPlansByDate(plans, holidayDates), [holidayDates, plans]);
+  const featured = useMemo(() => featuredBreakPlans(plans), [plans]);
+  const potentialByDate = useMemo(() => new Map(featured.flatMap((plan) => plan.dates.map((date) => [date, plan] as const))), [featured]);
+  const plansByDate = useMemo(() => indexPlansByDate(plans, holidayDates, featured), [holidayDates, plans, featured]);
 
   const suggestedLeaveDates = useMemo(
     () => new Set(plans.flatMap((plan) => plan.leaveDates)),
@@ -282,7 +285,7 @@ function useCalendarData(year: SupportedYear, saturdayPolicy: boolean, schoolOve
     return dates;
   }, [schoolOverlay, year]);
 
-  return { year, yearData, holidayDates, plans, plansByDate, suggestedLeaveDates, schoolDates };
+  return { year, yearData, holidayDates, plans, plansByDate, potentialByDate, suggestedLeaveDates, schoolDates };
 }
 
 export function Planner({ initialYear }: PlannerProps) {
@@ -431,6 +434,7 @@ export function Planner({ initialYear }: PlannerProps) {
                         yearHolidays={calendar.yearData.holidays}
                         holidayDates={calendar.holidayDates}
                         plansByDate={calendar.plansByDate}
+                        potentialByDate={calendar.potentialByDate}
                         activePlan={calendar.year === year ? activePlan : null}
                         activeRange={activeRange}
                         activeLeave={activeLeave}

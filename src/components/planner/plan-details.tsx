@@ -30,7 +30,7 @@ type Props = {
 };
 
 function DetailsContent({ plan, options, holidayDates, year, closePlan, chooseAlternative }: Props) {
-  if (!plan) return <div className={styles.emptyPanel}><h2 className={styles.panelTitle}>Pick a date</h2><p>Select a public holiday or a blue-marked leave day.</p></div>;
+  if (!plan) return <div className={styles.emptyPanel}><h2 className={styles.panelTitle}>Pick a date</h2><p>Select a highlighted break or public holiday.</p></div>;
   const holidays = plan.dates.flatMap((date) => (holidayDates.get(date) ?? []).map((holiday) => ({ date, holiday })));
   return (
     <>

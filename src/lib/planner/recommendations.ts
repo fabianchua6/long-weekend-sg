@@ -16,7 +16,32 @@ export function usefulPlans(plans: BreakPlan[], holidayDates: Map<DateString, Ho
   });
 }
 
-export function indexPlansByDate(plans: BreakPlan[], holidayDates: Map<DateString, Holiday[]>) {
+/** One best-value extended break per holiday cluster, without overlapping bands. */
+export function featuredBreakPlans(plans: BreakPlan[]): BreakPlan[] {
+  const featured: BreakPlan[] = [];
+  const usedDates = new Set<DateString>();
+  const usedHolidays = new Set<DateString>();
+  for (const plan of plans) {
+    if (plan.leaveCost === 0 || plan.totalDaysOff < 4) continue;
+    if (plan.dates.some((date) => usedDates.has(date)) ||
+      plan.anchorHolidays.some((holiday) => usedHolidays.has(holiday.date))) continue;
+    featured.push(plan);
+    plan.dates.forEach((date) => usedDates.add(date));
+    plan.anchorHolidays.forEach((holiday) => usedHolidays.add(holiday.date));
+  }
+  return featured;
+}
+
+/** Close each capsule at a week/month edge, including cross-month breaks. */
+export function rangeEdges(date: DateString, plan: BreakPlan) {
+  const weekday = new Date(`${date}T00:00:00Z`).getUTCDay();
+  return {
+    start: date === plan.startDate || date.endsWith("-01") || weekday === 1,
+    end: date === plan.endDate || addDays(date, 1).slice(0, 7) !== date.slice(0, 7) || weekday === 0,
+  };
+}
+
+export function indexPlansByDate(plans: BreakPlan[], holidayDates: Map<DateString, Holiday[]>, featured: BreakPlan[] = []) {
   const map = new Map<DateString, BreakPlan[]>();
   for (const plan of plans) {
     const leaveDates = new Set(plan.leaveDates);
@@ -25,6 +50,13 @@ export function indexPlansByDate(plans: BreakPlan[], holidayDates: Map<DateStrin
       const candidates = map.get(date) ?? [];
       candidates.push(plan);
       map.set(date, candidates);
+    }
+  }
+  // Every date in a visible band opens that exact plan, including weekends.
+  for (const plan of featured) {
+    for (const date of plan.dates) {
+      const candidates = plans.filter((candidate) => candidate.dates.includes(date));
+      map.set(date, [plan, ...candidates.filter((candidate) => candidate.id !== plan.id)]);
     }
   }
   return map;

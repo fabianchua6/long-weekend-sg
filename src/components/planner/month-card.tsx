@@ -1,7 +1,7 @@
 "use client";
 
 import { dateKey } from "@/lib/planner/build-break-plans";
-import { getPlanOptions } from "@/lib/planner/recommendations";
+import { getPlanOptions, rangeEdges } from "@/lib/planner/recommendations";
 import type { BreakPlan, DateString, Holiday } from "@/lib/planner/types";
 import styles from "./planner.module.css";
 
@@ -36,6 +36,7 @@ type MonthCardProps = {
   yearHolidays: Holiday[];
   holidayDates: Map<DateString, Holiday[]>;
   plansByDate: Map<DateString, BreakPlan[]>;
+  potentialByDate: Map<DateString, BreakPlan>;
   activePlan: BreakPlan | null;
   activeRange: Set<DateString>;
   activeLeave: Set<DateString>;
@@ -54,6 +55,7 @@ type DayCellProps = Pick<
   | "yearHolidays"
   | "holidayDates"
   | "plansByDate"
+  | "potentialByDate"
   | "activePlan"
   | "activeRange"
   | "activeLeave"
@@ -74,6 +76,7 @@ function buildDayDetails({
   yearHolidays,
   holidayDates,
   plansByDate,
+  potentialByDate,
   activePlan,
   activeRange,
   activeLeave,
@@ -113,6 +116,7 @@ function buildDayDetails({
   }
   if (suggestedLeaveDates.has(date)) labels.push("suggested leave day");
   if (schoolDates.has(date)) labels.push(...schoolDates.get(date)!);
+  if (potentialByDate.has(date)) labels.push("potential break");
   if (interactive) {
     const selected = Boolean(lockedPlanId && anchorDate === date && activePlan);
     const best = selected ? activePlan! : getPlanOptions(datePlans)[0];
@@ -132,8 +136,6 @@ function buildDayDetails({
     isHoliday ? styles.holidayDay : "",
     isObserved ? styles.observedDay : "",
     isForecast && (isHoliday || isObserved) ? styles.forecastHoliday : "",
-    date === activePlan?.startDate ? styles.rangeStart : "",
-    date === activePlan?.endDate ? styles.rangeEnd : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -144,9 +146,18 @@ function buildDayDetails({
 function DayCell(props: DayCellProps) {
   if (!props.day) return <span className={styles.emptyDay} />;
   const { date, dayClasses, interactive, label } = buildDayDetails({ ...props, day: props.day });
+  const band = props.activePlan
+    ? (props.activeRange.has(date) ? props.activePlan : undefined)
+    : props.potentialByDate.get(date);
+  const edges = band ? rangeEdges(date, band) : undefined;
 
   return (
-    <span className={`${styles.daySlot} ${props.activeRange.has(date) ? styles.rangeSlot : ""}`}>
+    <span className={styles.daySlot}
+      data-range={band ? (props.activePlan ? "selected" : "potential") : undefined}
+      data-range-id={band?.id}
+      data-range-forecast={band?.anchorHolidays.some((holiday) => holiday.status === "forecast") || undefined}
+      data-range-start={edges?.start || undefined}
+      data-range-end={edges?.end || undefined}>
       {interactive ? (
         <button
           className={dayClasses}
@@ -181,6 +192,7 @@ export function MonthCard({
   yearHolidays,
   holidayDates,
   plansByDate,
+  potentialByDate,
   activePlan,
   activeRange,
   activeLeave,
@@ -225,6 +237,7 @@ export function MonthCard({
             yearHolidays={yearHolidays}
             holidayDates={holidayDates}
             plansByDate={plansByDate}
+            potentialByDate={potentialByDate}
             activePlan={activePlan}
             activeRange={activeRange}
             activeLeave={activeLeave}

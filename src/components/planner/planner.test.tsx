@@ -57,6 +57,38 @@ afterEach(async () => {
 });
 
 describe("desktop leave planning", () => {
+  it("shows potential pills, opens the same range from its weekend, and restores them on clear", async () => {
+    await render();
+    const calendar = host.querySelector('[aria-label="2027 calendar"]')!;
+    const pills = [...calendar.querySelectorAll<HTMLElement>('[data-range="potential"]')];
+    expect(pills.length).toBeGreaterThan(0);
+    const weekend = pills.find((slot) => {
+      const day = slot.querySelector<HTMLButtonElement>('button[data-date]')?.dataset.date;
+      return day && new Date(`${day}T00:00:00Z`).getUTCDay() === 0;
+    })!;
+    const id = weekend.dataset.rangeId;
+    const expectedDates = pills.filter((slot) => slot.dataset.rangeId === id).map((slot) => slot.querySelector<HTMLButtonElement>('button[data-date]')!.dataset.date);
+    await click(weekend.querySelector('button')!);
+    const selected = [...calendar.querySelectorAll('[data-range="selected"]')];
+    expect(selected.map((slot) => slot.querySelector<HTMLButtonElement>('button[data-date]')!.dataset.date)).toEqual(expectedDates);
+    expect(calendar.querySelector('[data-range="potential"]')).toBeNull();
+    expect(selected[0].hasAttribute("data-range-start")).toBe(true);
+    expect(selected.at(-1)!.hasAttribute("data-range-end")).toBe(true);
+    await click(byLabel("Clear selection"));
+    await tick();
+    expect(calendar.querySelectorAll('[data-range="potential"]')).toHaveLength(pills.length);
+    expect(calendar.querySelector('[data-range="selected"]')).toBeNull();
+  });
+
+  it("distinguishes provisional bands after switching year", async () => {
+    await render();
+    await click(byLabel("2027 calendar. Show 2028"));
+    const calendar = host.querySelector('[aria-label="2028 calendar"]')!;
+    const bands = [...calendar.querySelectorAll('[data-range="potential"]')];
+    expect(bands.length).toBeGreaterThan(0);
+    expect(bands.every((band) => band.hasAttribute("data-range-forecast"))).toBe(true);
+  });
+
   it("starts without an unrelated selected recommendation", async () => {
     await render();
     expect(panel().textContent).toContain("Pick a date");
