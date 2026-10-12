@@ -45,7 +45,7 @@
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 .legendHoliday { border-radius: 50% !important; background: var(--holiday); }
-.legend .legendPotential { width: 22px; height: 12px; border-radius: 3px; background: var(--potential-break); border: 1px solid #a9c5df; }
+.legend .legendPotential { width: 22px; height: 12px; border-radius: 999px; background: var(--potential-break); border: 1px solid #a9c5df; }
 .legendLeave { position: relative; background: transparent; }
 .legendLeave::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: #6d97bd; }
 .legendWeekend { background: #e9ebef; }
@@ -61,14 +61,14 @@
 .daySlot, .emptyDay { display: grid; place-items: center; height: 28px; min-width: 0; }
 .daySlot { position: relative; }
 .daySlot[data-range]::before { content: ""; position: absolute; inset: 0; background: var(--potential-break); border-block: 1px solid #a9c5df; pointer-events: none; }
-.daySlot[data-range-start]::before { border-start-start-radius: 5px; border-end-start-radius: 5px; border-inline-start: 1px solid #a9c5df; }
-.daySlot[data-range-end]::before { border-start-end-radius: 5px; border-end-end-radius: 5px; border-inline-end: 1px solid #a9c5df; }
-.daySlot[data-range-continues-before]::before { border-inline-start: 1px solid #a9c5df; }
-.daySlot[data-range-continues-after]::before { border-inline-end: 1px solid #a9c5df; }
+.daySlot[data-range-start]::before { border-start-start-radius: 999px; border-end-start-radius: 999px; border-inline-start: 1px solid #a9c5df; }
+.daySlot[data-range-end]::before { border-start-end-radius: 999px; border-end-end-radius: 999px; border-inline-end: 1px solid #a9c5df; }
+.daySlot[data-range-continues-before]::before { border-start-start-radius: 0; border-end-start-radius: 0; border-inline-start-width: 0; }
+.daySlot[data-range-continues-after]::before { border-start-end-radius: 0; border-end-end-radius: 0; border-inline-end-width: 0; }
 .daySlot[data-range="selected"]::before { background: var(--leave-soft); border-color: #6d97bd; }
 .daySlot[data-range-forecast]::before { border-style: dashed; border-inline-width: 0; }
-.daySlot[data-range-forecast]:is([data-range-start], [data-range-continues-before])::before { border-inline-start-width: 1px; }
-.daySlot[data-range-forecast]:is([data-range-end], [data-range-continues-after])::before { border-inline-end-width: 1px; }
+.daySlot[data-range-forecast][data-range-start]::before { border-inline-start-width: 1px; }
+.daySlot[data-range-forecast][data-range-end]::before { border-inline-end-width: 1px; }
 .daySlot:nth-child(7n), .daySlot:nth-child(7n - 1) { background: var(--subtle); }
 .day { position: relative; display: grid; width: 100%; max-width: 34px; height: 28px; place-items: center; border: 0; border-radius: 5px; background: transparent; color: var(--ink); font-size: .7rem; font-variant-numeric: tabular-nums; line-height: 1; isolation: isolate; }
 button.day { cursor: pointer; }
