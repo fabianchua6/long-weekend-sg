@@ -24,11 +24,12 @@
 .chevronLeft { transform: rotate(180deg); }
 .settingsShell { position: relative; }
 .settingsButton[aria-expanded="true"] { background: var(--subtle); }
-.settingsMenu { position: absolute; z-index: 40; top: calc(100% + 8px); right: 0; display: grid; width: 285px; gap: 4px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 12px 36px rgb(20 30 45 / 12%); opacity: 0; transform: translateY(-4px); transition: opacity 150ms ease, transform 150ms ease; pointer-events: none; }
-.settingsMenuOpen { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.settingsMenu { position: absolute; z-index: 40; top: calc(100% + 8px); right: 0; display: grid; width: min(285px,calc(100vw - 44px)); gap: 4px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 12px 36px rgb(20 30 45 / 12%); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 150ms ease, transform 150ms ease, visibility 0s linear 150ms; pointer-events: none; }
+.settingsMenuOpen { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; transition-delay: 0s; }
 .settingsMenuClosing { opacity: 0; }
 .toggleControl { display: flex; align-items: center; gap: 16px; min-height: 48px; padding: 10px; cursor: pointer; }
 .toggleLabel { flex: 1; font-size: .77rem; }
+.toggleLabel small { display: block; margin-top: 5px; font-size: .7rem; line-height: 1.45; color: var(--muted); }
 .toggleDisabled { cursor: not-allowed; opacity: .5; }
 .switch { position: relative; width: 34px; height: 20px; flex: 0 0 auto; border-radius: 999px; background: #d7dadd; transition: background 150ms ease; }
 .switchKnob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform 150ms ease; }
@@ -44,7 +45,8 @@
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 .legendHoliday { border-radius: 50% !important; background: var(--holiday); }
-.legendLeave { background: var(--leave); }
+.legendLeave { position: relative; background: transparent; }
+.legendLeave::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: #6d97bd; }
 .legendWeekend { background: #e9ebef; }
 .legendSchool { background: var(--school); }
 .legendForecast { border: 1.5px solid var(--holiday); border-radius: 50% !important; }
@@ -61,6 +63,8 @@
 button.day { cursor: pointer; }
 button.day:hover { box-shadow: inset 0 0 0 1px #a5b7c9; }
 button.day:focus-visible { z-index: 2; }
+button.day[aria-pressed="true"] { outline: 1px solid var(--ink); outline-offset: 2px; z-index: 1; }
+button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus); }
 .schoolDay { background: var(--school); }
 .suggestedDay::after { content: ""; position: absolute; bottom: 1px; width: 3px; height: 3px; border-radius: 50%; background: #6d97bd; }
 .daySlot.rangeSlot { background: var(--leave-soft); }
@@ -86,12 +90,9 @@ button.day:focus-visible { z-index: 2; }
 .holidayList a { text-decoration: none; }
 .holidayList a:hover { text-decoration: underline; }
 .holidayList small { display: block; color: var(--muted); margin-top: 4px; font-size: .67rem; }
-.breakTimeline { display: flex; padding: 0; margin: 0; list-style: none; gap: 3px; }
-.breakTimeline li { flex: 1; min-width: 0; display: grid; justify-items: center; gap: 6px; border-radius: 5px; padding: 9px 0; background: #e9edf1; font-size: .7rem; }
-.breakTimeline small { font-size: .5rem; }
-.breakTimeline .timelineLeave { background: var(--leave); }
-.breakTimeline .timelineHoliday { background: var(--holiday-soft); }
-.alternatives button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; border: 0; padding: 10px 0; border-radius: 5px; background: transparent; text-align: left; color: var(--ink); cursor: pointer; }
+.alternatives button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 44px; border: 0; padding: 10px 8px; border-radius: 5px; background: transparent; text-align: left; color: var(--ink); cursor: pointer; }
+.alternatives button[aria-pressed="true"] { background: var(--leave-soft); }
+.optionSelected { font-size: .64rem; color: var(--muted); }
 .alternatives button:hover { background: #e9edf2; }
 .alternatives strong { font-size: .75rem; font-weight: 500; }
 .alternatives small { display: block; margin-top: 5px; font-size: .65rem; color: var(--muted); }
@@ -112,6 +113,8 @@ button.day:focus-visible { z-index: 2; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: end; }
 .mobileSheet { display: none; }
 .emptyPanel { color: var(--muted); font-size: .85rem; }
+.emptyPanel .panelTitle { color: var(--ink); margin-bottom: 12px; }
+.emptyPanel p { line-height: 1.6; }
 @media (min-width: 1600px) {
   .workspace { grid-template-columns: minmax(0,1fr) 360px; }
   .yearCanvas { padding: 28px 40px 18px; }
@@ -131,6 +134,7 @@ button.day:focus-visible { z-index: 2; }
   .calendarGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
 @media (max-width: 760px) {
+  .yearSwitch, .settingsButton { min-height: 44px; }
   .header { flex-wrap: wrap; gap: 14px; padding: 18px 22px 12px; }
   .titleLine h1 { font-size: 1.9rem; }
   .controls { width: 100%; gap: 15px; }
@@ -143,9 +147,10 @@ button.day:focus-visible { z-index: 2; }
   .yearCanvas { padding: 20px 22px; }
   .legend { gap: 10px 15px; margin-bottom: 27px; font-size: .68rem; }
   .detailsPanel { display: none; }
-  .calendarGrid { gap: 30px; }
-  .daySlot, .emptyDay { height: 40px; }
+  .calendarGrid { gap: 30px; --date-hit-width: calc((100vw - 74px) / 14); }
+  .daySlot, .emptyDay { height: 44px; }
   .day { height: 36px; max-width: 100%; font-size: .8rem; }
+  button.day::before { content: ""; position: absolute; inset: 50% auto auto 50%; width: var(--date-hit-width); height: 44px; transform: translate(-50%, -50%); }
   .holidayDay, .observedDay { width: 30px; height: 30px; }
   .mobileSheet[open] { display: block; position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: 74dvh; overflow-y: auto; overscroll-behavior: contain; border: 0; border-radius: 20px 20px 0 0; padding: 26px 24px max(26px,env(safe-area-inset-bottom)); background: var(--surface); color: var(--ink); box-shadow: 0 -8px 40px rgb(20 30 45 / 10%); animation: sheet-in 220ms cubic-bezier(.22,1,.36,1); }
   .mobileSheet::backdrop { background: rgb(20 30 45 / 12%); }
@@ -158,13 +163,12 @@ button.day:focus-visible { z-index: 2; }
   .detailSection h3 { margin-bottom: 10px; }
   .leaveList { display: flex; flex-wrap: wrap; gap: 6px; }
   .leaveList li { padding: 7px 10px; border-radius: 7px; background: var(--subtle); font-size: .8rem; }
-  .timelineSection { display: none; }
   .closeButton { top: 22px; right: 15px; width: 40px; height: 40px; }
   .notice { flex-direction: column; gap: 7px; }
   .footer { font-size: .63rem; }
 }
 @media (max-width: 520px) {
-  .calendarGrid { grid-template-columns: 1fr; gap: 35px; }
+  .calendarGrid { grid-template-columns: 1fr; gap: 35px; --date-hit-width: calc((100vw - 44px) / 7); }
   .monthHeader h2 { font-size: 1.5rem; }
   .daySlot, .emptyDay { height: 44px; }
   .day { height: 42px; font-size: .84rem; }

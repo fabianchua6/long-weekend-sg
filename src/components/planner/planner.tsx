@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   FORECAST_2028_SOURCE,
@@ -16,6 +16,7 @@ import {
   effectiveHolidayDates,
 } from "@/lib/planner/build-break-plans";
 import type { BreakPlan, DateString } from "@/lib/planner/types";
+import { getPlanOptions, indexPlansByDate, usefulPlans } from "@/lib/planner/recommendations";
 import { ChevronRight, ExternalLinkIcon, SettingsIcon } from "./icons";
 import { MonthCard } from "./month-card";
 import { PlanDetails } from "./plan-details";
@@ -55,15 +56,17 @@ function Toggle({
   description?: string;
   onChange: (next: boolean) => void;
 }) {
+  const descriptionId = useId();
   return (
     <label className={`${styles.toggleControl} ${disabled ? styles.toggleDisabled : ""}`}>
-      <span className={styles.toggleLabel}>{label}</span>
+      <span className={styles.toggleLabel}>{label}{description ? <small id={descriptionId}>{description}</small> : null}</span>
       <input
         className={styles.srOnly}
         type="checkbox"
         checked={checked}
         disabled={disabled}
-        aria-label={description ? `${label}. ${description}` : label}
+        aria-label={label}
+        aria-describedby={description ? descriptionId : undefined}
         onChange={(event) => onChange(event.target.checked)}
       />
       <span className={styles.switch} aria-hidden="true">
@@ -88,44 +91,33 @@ function PlannerHeader({
   onSchoolOverlayChange: (checked: boolean) => void;
   onSaturdayPolicyChange: (checked: boolean) => void;
 }) {
-  const [settingsMounted, setSettingsMounted] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
   const settingsButtonRef = useRef<HTMLButtonElement>(null);
-  const settingsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nextYear: SupportedYear = year === 2027 ? 2028 : 2027;
 
-  const clearSettingsTimer = useCallback(() => {
-    if (settingsTimer.current) clearTimeout(settingsTimer.current);
-    settingsTimer.current = null;
-  }, []);
-
   const openSettings = () => {
-    clearSettingsTimer();
-    setSettingsMounted(true);
-    requestAnimationFrame(() => setSettingsOpen(true));
+    setSettingsOpen(true);
   };
 
   const closeSettings = useCallback((restoreFocus = false) => {
-    clearSettingsTimer();
     setSettingsOpen(false);
-    settingsTimer.current = setTimeout(() => {
-      setSettingsMounted(false);
-      settingsTimer.current = null;
-    }, 150);
     if (restoreFocus) settingsButtonRef.current?.focus();
-  }, [clearSettingsTimer]);
+  }, []);
   const closeSettingsFromEffect = useEffectEvent((restoreFocus = false) => {
     closeSettings(restoreFocus);
   });
 
   useEffect(() => {
-    if (!settingsMounted) return;
+    if (!settingsOpen) return;
     const handlePointerDown = (event: PointerEvent) => {
       if (!settingsRef.current?.contains(event.target as Node)) closeSettingsFromEffect();
     };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeSettingsFromEffect(true);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeSettingsFromEffect(true);
+      }
     };
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
@@ -133,9 +125,7 @@ function PlannerHeader({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [settingsMounted]);
-
-  useEffect(() => () => clearSettingsTimer(), [clearSettingsTimer]);
+  }, [settingsOpen]);
 
   return (
     <>
@@ -151,7 +141,7 @@ function PlannerHeader({
           <button
             className={styles.yearSwitch}
             type="button"
-            aria-label={`Show ${nextYear} calendar`}
+            aria-label={`${year} calendar. Show ${nextYear}`}
             data-year={year}
             onClick={() => onYearChange(nextYear)}
           >
@@ -167,26 +157,30 @@ function PlannerHeader({
           <span className={`${styles.statusBadge} ${year === 2028 ? styles.forecastBadge : ""}`}>
             {year === 2027 ? "Official" : "Provisional"}
           </span>
-          <div className={styles.settingsShell} ref={settingsRef}>
+          <div className={styles.settingsShell} ref={settingsRef}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) closeSettings();
+            }}>
             <button
               ref={settingsButtonRef}
               aria-label="Settings"
               className={styles.settingsButton}
               type="button"
               aria-expanded={settingsOpen}
-              aria-controls={settingsMounted ? "planner-settings" : undefined}
+              aria-controls="planner-settings"
               onClick={() => (settingsOpen ? closeSettings() : openSettings())}
             >
               <SettingsIcon />
               <span>Settings</span>
             </button>
 
-            {settingsMounted ? (
               <div
                 id="planner-settings"
                 className={`${styles.settingsMenu} ${settingsOpen ? styles.settingsMenuOpen : styles.settingsMenuClosing}`}
                 aria-label="Planner settings"
                 role="group"
+                inert={!settingsOpen}
+                aria-hidden={!settingsOpen}
               >
                 <Toggle
                   checked={schoolOverlay}
@@ -195,18 +189,16 @@ function PlannerHeader({
                   description={
                     year === 2028
                       ? "Unavailable until MOE publishes official 2028 dates."
-                      : "Show official MOE school break dates."
+                      : undefined
                   }
                   onChange={onSchoolOverlayChange}
                 />
                 <Toggle
                   checked={saturdayPolicy}
-                  label="Saturday PH → Monday"
-                  description="Use only if your workplace grants Monday off after a Saturday public holiday."
+                  label="My workplace gives Monday off for Saturday PH"
                   onChange={onSaturdayPolicyChange}
                 />
               </div>
-            ) : null}
           </div>
         </div>
       </header>
@@ -218,8 +210,7 @@ function ForecastNotice() {
   return (
     <aside className={styles.notice} aria-label="2028 forecast notice">
       <div>
-        <strong>2028 dates are a forecast.</strong> Fixed dates are reliable; lunar and religious
-        dates stay provisional until MOM confirms them.
+        <strong>2028 is provisional.</strong> Confirm MOM dates before booking.
       </div>
       <a href={FORECAST_2028_SOURCE} target="_blank" rel="noreferrer">
         Forecast source <ExternalLinkIcon />
@@ -247,6 +238,7 @@ function PlannerFooter() {
       <details>
         <summary>Sources &amp; policy</summary>
         <p>Saturday public holidays may be compensated with another day off or salary in lieu. Monday is only added when the workplace switch is on.</p>
+        <p>Breaks stay within the selected year. School shading includes school-specific holidays; check the MOE calendar for your school.</p>
         <nav aria-label="Sources">
           <a href={MOM_2027_SOURCE} target="_blank" rel="noreferrer">MOM holidays <ExternalLinkIcon /></a>
           <a href={MOM_ENTITLEMENT_SOURCE} target="_blank" rel="noreferrer">Entitlement rules <ExternalLinkIcon /></a>
@@ -267,30 +259,11 @@ function useCalendarData(year: SupportedYear, saturdayPolicy: boolean, schoolOve
 
   const plans = useMemo(
     () =>
-      buildBreakPlans(yearData, { year, saturdayHolidayPolicy: saturdayPolicy }).filter(
-        (plan) =>
-          plan.leaveCost >= 1 &&
-          plan.leaveCost <= 4 &&
-          plan.totalDaysOff >= 3 &&
-          plan.totalDaysOff >= plan.leaveCost + 2,
-      ),
-    [saturdayPolicy, year, yearData],
+      usefulPlans(buildBreakPlans(yearData, { year, saturdayHolidayPolicy: saturdayPolicy }), holidayDates),
+    [saturdayPolicy, year, yearData, holidayDates],
   );
 
-  const plansByDate = useMemo(() => {
-    const map = new Map<DateString, BreakPlan[]>();
-    for (const plan of plans) {
-      const interactiveDates = plan.dates.filter(
-        (date) => plan.leaveDates.includes(date) || holidayDates.has(date),
-      );
-      for (const date of interactiveDates) {
-        const existing = map.get(date) ?? [];
-        if (!existing.some((candidate) => candidate.id === plan.id)) existing.push(plan);
-        map.set(date, existing);
-      }
-    }
-    return map;
-  }, [holidayDates, plans]);
+  const plansByDate = useMemo(() => indexPlansByDate(plans, holidayDates), [holidayDates, plans]);
 
   const suggestedLeaveDates = useMemo(
     () => new Set(plans.flatMap((plan) => plan.leaveDates)),
@@ -298,10 +271,13 @@ function useCalendarData(year: SupportedYear, saturdayPolicy: boolean, schoolOve
   );
 
   const schoolDates = useMemo(() => {
-    const dates = new Set<DateString>();
+    const dates = new Map<DateString, string[]>();
     if (!schoolOverlay || year !== 2027) return dates;
     for (const schoolBreak of SCHOOL_BREAKS[year]) {
-      for (const date of datesInRange(schoolBreak.startDate, schoolBreak.endDate)) dates.add(date);
+      const scope = schoolBreak.appliesTo === "primary" ? " (primary schools)" : schoolBreak.appliesTo === "primary-secondary" ? " (primary and secondary schools)" : "";
+      for (const date of datesInRange(schoolBreak.startDate, schoolBreak.endDate)) {
+        dates.set(date, [...(dates.get(date) ?? []), schoolBreak.label + scope]);
+      }
     }
     return dates;
   }, [schoolOverlay, year]);
@@ -319,7 +295,6 @@ export function Planner({ initialYear }: PlannerProps) {
   const [hoveredPlanId, setHoveredPlanId] = useState<string | null>(null);
   const [lockedPlanId, setLockedPlanId] = useState<string | null>(null);
   const [anchorDate, setAnchorDate] = useState<DateString | null>(null);
-  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressedFocusPreviewDate = useRef<DateString | null>(null);
   // Keep both pages mounted so CSS can reverse an in-flight swipe smoothly.
   const calendar2027 = useCalendarData(2027, saturdayPolicy, schoolOverlay);
@@ -330,8 +305,7 @@ export function Planner({ initialYear }: PlannerProps) {
     [plans],
   );
 
-  const featuredPlan = plans.find((plan) => plan.totalDaysOff === 9 && plan.leaveCost === 3) ?? plans[0] ?? null;
-  const activePlan = planById.get(lockedPlanId ?? hoveredPlanId ?? "") ?? featuredPlan;
+  const activePlan = planById.get(lockedPlanId ?? hoveredPlanId ?? "") ?? null;
   const activeRange = useMemo(
     () => new Set(activePlan?.dates ?? []),
     [activePlan],
@@ -341,37 +315,7 @@ export function Planner({ initialYear }: PlannerProps) {
     [activePlan],
   );
 
-  const alternatives = useMemo(() => {
-    if (!activePlan) return [];
-    const referenceDate = anchorDate ?? activePlan.anchorHolidays[0]?.date;
-    return (referenceDate ? plansByDate.get(referenceDate) ?? [] : [])
-      .filter((plan) => plan.id !== activePlan.id)
-      .filter(
-        (plan, index, all) =>
-          all.findIndex(
-            (candidate) =>
-              candidate.leaveCost === plan.leaveCost &&
-              candidate.totalDaysOff === plan.totalDaysOff &&
-              candidate.startDate === plan.startDate &&
-              candidate.endDate === plan.endDate,
-          ) === index,
-      )
-      .slice(0, 2);
-  }, [activePlan, anchorDate, plansByDate]);
-
-  const cancelClear = () => {
-    if (clearTimer.current) clearTimeout(clearTimer.current);
-    clearTimer.current = null;
-  };
-
-  const scheduleClear = () => {
-    cancelClear();
-    if (lockedPlanId) return;
-    clearTimer.current = setTimeout(() => {
-      setHoveredPlanId(null);
-      setAnchorDate(null);
-    }, 120);
-  };
+  const options = useMemo(() => getPlanOptions(anchorDate ? plansByDate.get(anchorDate) ?? [] : []), [anchorDate, plansByDate]);
 
   const previewDate = (date: DateString, source: "focus" | "pointer") => {
     if (source === "focus" && suppressedFocusPreviewDate.current === date) {
@@ -379,18 +323,16 @@ export function Planner({ initialYear }: PlannerProps) {
       return;
     }
     if (lockedPlanId) return;
-    cancelClear();
-    const bestPlan = plansByDate.get(date)?.[0];
+    const bestPlan = getPlanOptions(plansByDate.get(date) ?? [])[0];
     if (!bestPlan) return;
     setAnchorDate(date);
     setHoveredPlanId(bestPlan.id);
   };
 
-  const lockDate = (date: DateString) => {
-    cancelClear();
-    const bestPlan = plansByDate.get(date)?.[0];
+  const lockDate = (date: DateString, focusDetails = false) => {
+    const bestPlan = getPlanOptions(plansByDate.get(date) ?? [])[0];
     if (!bestPlan) return;
-    if (lockedPlanId === bestPlan.id && anchorDate === date) {
+    if (lockedPlanId && anchorDate === date) {
       setLockedPlanId(null);
       setHoveredPlanId(null);
       setAnchorDate(null);
@@ -399,31 +341,29 @@ export function Planner({ initialYear }: PlannerProps) {
     setAnchorDate(date);
     setHoveredPlanId(null);
     setLockedPlanId(bestPlan.id);
+    if (focusDetails) requestAnimationFrame(() => document.getElementById("break-title")?.focus({ preventScroll: true }));
   };
 
-  const closePlan = () => {
+  const closePlan = (restoreFocus = true) => {
     const dateToRestore = anchorDate;
-    cancelClear();
     setHoveredPlanId(null);
     setLockedPlanId(null);
     setAnchorDate(null);
-    if (dateToRestore) {
+    if (restoreFocus && dateToRestore) {
       suppressedFocusPreviewDate.current = dateToRestore;
       requestAnimationFrame(() => {
-        document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus();
+        document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus({ preventScroll: true });
       });
     }
   };
 
   const chooseAlternative = (plan: BreakPlan) => {
-    cancelClear();
     setHoveredPlanId(null);
     setLockedPlanId(plan.id);
   };
 
   const changeYear = (nextYear: SupportedYear) => {
     if (nextYear === year) return;
-    cancelClear();
     suppressedFocusPreviewDate.current = null;
     setHoveredPlanId(null);
     setLockedPlanId(null);
@@ -437,30 +377,21 @@ export function Planner({ initialYear }: PlannerProps) {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("[aria-label='Planner settings']")) return;
+      if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("dialog[open], [aria-label='Settings'][aria-expanded='true']")) return;
       const dateToRestore = anchorDate;
-      if (clearTimer.current) clearTimeout(clearTimer.current);
-      clearTimer.current = null;
       setHoveredPlanId(null);
       setLockedPlanId(null);
       setAnchorDate(null);
       if (dateToRestore) {
         suppressedFocusPreviewDate.current = dateToRestore;
         requestAnimationFrame(() => {
-          document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus();
+          document.querySelector<HTMLButtonElement>(`button[data-date="${dateToRestore}"]`)?.focus({ preventScroll: true });
         });
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [anchorDate]);
-
-  useEffect(
-    () => () => {
-      if (clearTimer.current) clearTimeout(clearTimer.current);
-    },
-    [],
-  );
 
   return (
     <main className={styles.page}>
@@ -473,7 +404,7 @@ export function Planner({ initialYear }: PlannerProps) {
           onSchoolOverlayChange={setSchoolOverlay}
           onSaturdayPolicyChange={(next) => {
             setSaturdayPolicy(next);
-            closePlan();
+            closePlan(false);
           }}
         />
 
@@ -506,9 +437,9 @@ export function Planner({ initialYear }: PlannerProps) {
                         suggestedLeaveDates={calendar.suggestedLeaveDates}
                         schoolDates={calendar.schoolDates}
                         lockedPlanId={lockedPlanId}
+                        anchorDate={anchorDate}
                         previewDate={previewDate}
                         lockDate={lockDate}
-                        scheduleClear={scheduleClear}
                       />
                     ))}
                   </div>
@@ -519,12 +450,10 @@ export function Planner({ initialYear }: PlannerProps) {
           </div>
           <PlanDetails
             plan={activePlan}
-            alternatives={alternatives}
+            options={options}
             holidayDates={holidayDates}
             locked={Boolean(lockedPlanId)}
             year={year}
-            cancelClear={cancelClear}
-            scheduleClear={scheduleClear}
             closePlan={closePlan}
             chooseAlternative={chooseAlternative}
           />

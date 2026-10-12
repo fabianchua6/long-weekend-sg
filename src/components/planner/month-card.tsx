@@ -1,6 +1,7 @@
 "use client";
 
 import { dateKey } from "@/lib/planner/build-break-plans";
+import { getPlanOptions } from "@/lib/planner/recommendations";
 import type { BreakPlan, DateString, Holiday } from "@/lib/planner/types";
 import styles from "./planner.module.css";
 
@@ -39,11 +40,11 @@ type MonthCardProps = {
   activeRange: Set<DateString>;
   activeLeave: Set<DateString>;
   suggestedLeaveDates: Set<DateString>;
-  schoolDates: Set<DateString>;
+  schoolDates: Map<DateString, string[]>;
   lockedPlanId: string | null;
+  anchorDate: DateString | null;
   previewDate: (date: DateString, source: "focus" | "pointer") => void;
-  lockDate: (date: DateString) => void;
-  scheduleClear: () => void;
+  lockDate: (date: DateString, focusDetails?: boolean) => void;
 };
 
 type DayCellProps = Pick<
@@ -59,9 +60,9 @@ type DayCellProps = Pick<
   | "suggestedLeaveDates"
   | "schoolDates"
   | "lockedPlanId"
+  | "anchorDate"
   | "previewDate"
   | "lockDate"
-  | "scheduleClear"
 > & {
   day: number | null;
 };
@@ -78,7 +79,9 @@ function buildDayDetails({
   activeLeave,
   suggestedLeaveDates,
   schoolDates,
-}: Omit<DayCellProps, "lockedPlanId" | "previewDate" | "lockDate" | "scheduleClear"> & {
+  anchorDate,
+  lockedPlanId,
+}: Omit<DayCellProps, "previewDate" | "lockDate"> & {
   day: number;
 }) {
   const date = dateKey(new Date(Date.UTC(year, monthIndex, day)));
@@ -109,12 +112,14 @@ function buildDayDetails({
     labels.push(`${workplaceMonday.name}, workplace Monday-off assumption`);
   }
   if (suggestedLeaveDates.has(date)) labels.push("suggested leave day");
-  if (schoolDates.has(date)) labels.push("school break");
+  if (schoolDates.has(date)) labels.push(...schoolDates.get(date)!);
   if (interactive) {
-    const best = datePlans[0];
+    const selected = Boolean(lockedPlanId && anchorDate === date && activePlan);
+    const best = selected ? activePlan! : getPlanOptions(datePlans)[0];
     labels.push(
       `${plural(best.leaveCost, "leave day")} gives ${plural(best.totalDaysOff, "day")} off`,
     );
+    if (selected) labels.push("Selected. Activate to clear");
   }
 
   const dayClasses = [
@@ -147,15 +152,15 @@ function DayCell(props: DayCellProps) {
           className={dayClasses}
           type="button"
           aria-label={label}
-          aria-pressed={props.lockedPlanId ? props.activeRange.has(date) : undefined}
+          aria-pressed={Boolean(props.lockedPlanId && props.anchorDate === date)}
+          aria-controls="break-details"
+          title={label}
           data-date={date}
           onPointerEnter={(event) => {
             if (event.pointerType === "mouse") props.previewDate(date, "pointer");
           }}
-          onPointerLeave={props.scheduleClear}
           onFocus={() => props.previewDate(date, "focus")}
-          onBlur={props.scheduleClear}
-          onClick={() => props.lockDate(date)}
+          onClick={(event) => props.lockDate(date, event.detail === 0)}
         >
           {props.day}
         </button>
@@ -182,9 +187,9 @@ export function MonthCard({
   suggestedLeaveDates,
   schoolDates,
   lockedPlanId,
+  anchorDate,
   previewDate,
   lockDate,
-  scheduleClear,
 }: MonthCardProps) {
   const firstDay = new Date(Date.UTC(year, monthIndex, 1));
   const offset = (firstDay.getUTCDay() + 6) % 7;
@@ -226,9 +231,9 @@ export function MonthCard({
             suggestedLeaveDates={suggestedLeaveDates}
             schoolDates={schoolDates}
             lockedPlanId={lockedPlanId}
+            anchorDate={anchorDate}
             previewDate={previewDate}
             lockDate={lockDate}
-            scheduleClear={scheduleClear}
           />
         ))}
       </div>

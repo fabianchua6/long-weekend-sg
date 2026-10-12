@@ -29,7 +29,7 @@ The primary view is twelve individual month cards. The launch covers official 20
 ## Capabilities and Constraints
 
 - English-only, Monday-first calendars, Monday-to-Friday work pattern.
-- Recommendations use one to four annual-leave weekdays and show the best result plus up to two alternatives.
+- Leave recommendations use one to four annual-leave weekdays. A stable comparison shows up to three options, including a natural zero-leave break when available.
 - Sunday public holidays use official observed-day rules.
 - Saturday public holidays do not automatically add Monday unless the user enables the explicit workplace-policy switch.
 - View-only v1: no accounts, persistence, manual leave builder, sharing, exports, destination suggestions, or bookings.
@@ -52,6 +52,7 @@ The product name is “Long Weekend SG”. The voice is friendly and lightly Sin
 - Never let forecast dates look official.
 - Keep employer-policy assumptions explicit and conservative.
 - Make every hover interaction equally usable by keyboard and touch.
+- Keep previews available while moving to the details panel. Clicking selects a break; clearing it returns to an unselected state.
 - Prefer a focused annual planning canvas over feature breadth.
 
 ## Accessibility & Inclusion
