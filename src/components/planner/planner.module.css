@@ -80,6 +80,10 @@ button.day[aria-pressed="true"]:focus-visible { outline: 2px solid var(--focus);
 .suggestedDay::after { content: ""; position: absolute; bottom: 1px; width: 3px; height: 3px; border-radius: 50%; background: #6d97bd; }
 .rangeDay { background: transparent; }
 .activeLeaveDay { background: var(--leave); font-weight: 650; }
+.daySlot[data-range-start] .activeLeaveDay { border-start-start-radius: 999px; border-end-start-radius: 999px; }
+.daySlot[data-range-end] .activeLeaveDay { border-start-end-radius: 999px; border-end-end-radius: 999px; }
+.daySlot[data-range-continues-before] .activeLeaveDay { border-start-start-radius: 0; border-end-start-radius: 0; }
+.daySlot[data-range-continues-after] .activeLeaveDay { border-start-end-radius: 0; border-end-end-radius: 0; }
 .activeLeaveDay::after { display: none; }
 .holidayDay, .observedDay { width: 27px; height: 27px; border-radius: 50%; background: var(--holiday); color: #fff; font-weight: 600; }
 .observedDay::after { content: ""; position: absolute; right: 0; bottom: 0; width: 5px; height: 5px; border: 1px solid #fff; border-radius: 50%; background: var(--ink); }
