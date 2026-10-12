@@ -18,6 +18,7 @@ import {
 import type { BreakPlan, DateString } from "@/lib/planner/types";
 import { ChevronRight, ExternalLinkIcon, SettingsIcon } from "./icons";
 import { MonthCard } from "./month-card";
+import { PlanDetails } from "./plan-details";
 import styles from "./planner.module.css";
 
 type SupportedYear = 2027 | 2028;
@@ -76,7 +77,6 @@ function PlannerHeader({
   year,
   schoolOverlay,
   saturdayPolicy,
-  recommendationLocked,
   onYearChange,
   onSchoolOverlayChange,
   onSaturdayPolicyChange,
@@ -84,7 +84,6 @@ function PlannerHeader({
   year: SupportedYear;
   schoolOverlay: boolean;
   saturdayPolicy: boolean;
-  recommendationLocked: boolean;
   onYearChange: (year: SupportedYear) => void;
   onSchoolOverlayChange: (checked: boolean) => void;
   onSaturdayPolicyChange: (checked: boolean) => void;
@@ -144,9 +143,7 @@ function PlannerHeader({
         <div>
           <div className={styles.titleLine}>
             <h1>Long Weekend SG</h1>
-            <span className={`${styles.statusBadge} ${year === 2028 ? styles.forecastBadge : ""}`}>
-              {year === 2027 ? "Official" : "Provisional"}
-            </span>
+
           </div>
         </div>
 
@@ -162,12 +159,15 @@ function PlannerHeader({
             {year === 2027 ? <ChevronRight /> : null}
           </button>
 
+          <span className={`${styles.statusBadge} ${year === 2028 ? styles.forecastBadge : ""}`}>
+            {year === 2027 ? "Official" : "Provisional"}
+          </span>
           <div className={styles.settingsShell} ref={settingsRef}>
             <button
               ref={settingsButtonRef}
+              aria-label="Settings"
               className={styles.settingsButton}
               type="button"
-              disabled={recommendationLocked}
               aria-expanded={settingsOpen}
               aria-controls={settingsMounted ? "planner-settings" : undefined}
               onClick={() => (settingsOpen ? closeSettings() : openSettings())}
@@ -238,15 +238,16 @@ function PlannerLegend({ year, schoolOverlay }: { year: SupportedYear; schoolOve
 function PlannerFooter() {
   return (
     <footer className={styles.footer}>
-      <p>
-        Built for Monday–Friday workers. Saturday public holidays may be compensated with another
-        day off or salary in lieu; Monday is only added when the workplace switch is on.
-      </p>
-      <nav aria-label="Sources">
-        <a href={MOM_2027_SOURCE} target="_blank" rel="noreferrer">MOM holidays <ExternalLinkIcon /></a>
-        <a href={MOM_ENTITLEMENT_SOURCE} target="_blank" rel="noreferrer">Entitlement rules <ExternalLinkIcon /></a>
-        <a href={MOE_2027_SOURCE} target="_blank" rel="noreferrer">MOE calendar <ExternalLinkIcon /></a>
-      </nav>
+      <span>Singapore · Monday–Friday</span>
+      <details>
+        <summary>Sources &amp; policy</summary>
+        <p>Saturday public holidays may be compensated with another day off or salary in lieu. Monday is only added when the workplace switch is on.</p>
+        <nav aria-label="Sources">
+          <a href={MOM_2027_SOURCE} target="_blank" rel="noreferrer">MOM holidays <ExternalLinkIcon /></a>
+          <a href={MOM_ENTITLEMENT_SOURCE} target="_blank" rel="noreferrer">Entitlement rules <ExternalLinkIcon /></a>
+          <a href={MOE_2027_SOURCE} target="_blank" rel="noreferrer">MOE calendar <ExternalLinkIcon /></a>
+        </nav>
+      </details>
     </footer>
   );
 }
@@ -318,7 +319,8 @@ export function Planner({ initialYear }: PlannerProps) {
     return dates;
   }, [schoolOverlay, year]);
 
-  const activePlan = planById.get(hoveredPlanId ?? lockedPlanId ?? "") ?? null;
+  const featuredPlan = plans.find((plan) => plan.totalDaysOff === 9 && plan.leaveCost === 3) ?? plans[0] ?? null;
+  const activePlan = planById.get(lockedPlanId ?? hoveredPlanId ?? "") ?? featuredPlan;
   const activeRange = useMemo(
     () => new Set(activePlan?.dates ?? []),
     [activePlan],
@@ -329,8 +331,9 @@ export function Planner({ initialYear }: PlannerProps) {
   );
 
   const alternatives = useMemo(() => {
-    if (!activePlan || !anchorDate) return [];
-    return (plansByDate.get(anchorDate) ?? [])
+    if (!activePlan) return [];
+    const referenceDate = anchorDate ?? activePlan.anchorHolidays[0]?.date;
+    return (referenceDate ? plansByDate.get(referenceDate) ?? [] : [])
       .filter((plan) => plan.id !== activePlan.id)
       .filter(
         (plan, index, all) =>
@@ -353,7 +356,10 @@ export function Planner({ initialYear }: PlannerProps) {
   const scheduleClear = () => {
     cancelClear();
     if (lockedPlanId) return;
-    clearTimer.current = setTimeout(() => setHoveredPlanId(null), 120);
+    clearTimer.current = setTimeout(() => {
+      setHoveredPlanId(null);
+      setAnchorDate(null);
+    }, 120);
   };
 
   const previewDate = (date: DateString, source: "focus" | "pointer") => {
@@ -361,6 +367,7 @@ export function Planner({ initialYear }: PlannerProps) {
       suppressedFocusPreviewDate.current = null;
       return;
     }
+    if (lockedPlanId) return;
     cancelClear();
     const bestPlan = plansByDate.get(date)?.[0];
     if (!bestPlan) return;
@@ -437,7 +444,7 @@ export function Planner({ initialYear }: PlannerProps) {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key !== "Escape" || event.defaultPrevented || document.querySelector("[aria-label='Planner settings']")) return;
       const dateToRestore = anchorDate;
       if (clearTimer.current) clearTimeout(clearTimer.current);
       clearTimer.current = null;
@@ -469,7 +476,6 @@ export function Planner({ initialYear }: PlannerProps) {
           year={year}
           schoolOverlay={schoolOverlay}
           saturdayPolicy={saturdayPolicy}
-          recommendationLocked={Boolean(lockedPlanId)}
           onYearChange={changeYear}
           onSchoolOverlayChange={setSchoolOverlay}
           onSaturdayPolicyChange={(next) => {
@@ -478,47 +484,52 @@ export function Planner({ initialYear }: PlannerProps) {
           }}
         />
 
-        <div
-          key={year}
-          className={`${styles.yearCanvas} ${yearDirection === "forward" ? styles.yearCanvasForward : yearDirection === "backward" ? styles.yearCanvasBackward : ""}`}
-        >
-          {year === 2028 ? <ForecastNotice /> : null}
-          <section className={styles.calendarSection} aria-label={`${year} calendar`}>
-            <div className={styles.calendarGrid}>
-              {MONTHS.map((month, monthIndex) => (
-                <MonthCard
-                  key={month}
-                  month={month}
-                  monthIndex={monthIndex}
-                  year={year}
-                  yearHolidays={yearData.holidays}
-                  holidayDates={holidayDates}
-                  plansByDate={plansByDate}
-                  activePlan={activePlan}
-                  alternatives={alternatives}
-                  activeRange={activeRange}
-                  activeLeave={activeLeave}
-                  suggestedLeaveDates={suggestedLeaveDates}
-                  schoolDates={schoolDates}
-                  anchorDate={anchorDate}
-                  lockedPlanId={lockedPlanId}
-                  previewDate={previewDate}
-                  lockDate={lockDate}
-                  scheduleClear={scheduleClear}
-                  cancelClear={cancelClear}
-                  closePlan={closePlan}
-                  chooseAlternative={chooseAlternative}
-                />
-              ))}
-            </div>
-          </section>
-
-          <PlannerLegend year={year} schoolOverlay={schoolOverlay} />
+        <div className={styles.workspace}>
+          <div
+            key={year}
+            className={`${styles.yearCanvas} ${yearDirection === "forward" ? styles.yearCanvasForward : yearDirection === "backward" ? styles.yearCanvasBackward : ""}`}
+          >
+            {year === 2028 ? <ForecastNotice /> : null}
+            <PlannerLegend year={year} schoolOverlay={schoolOverlay} />
+            <section className={styles.calendarSection} aria-label={`${year} calendar`}>
+              <div className={styles.calendarGrid}>
+                {MONTHS.map((month, monthIndex) => (
+                  <MonthCard
+                    key={month}
+                    month={month}
+                    monthIndex={monthIndex}
+                    year={year}
+                    yearHolidays={yearData.holidays}
+                    holidayDates={holidayDates}
+                    plansByDate={plansByDate}
+                    activePlan={activePlan}
+                    activeRange={activeRange}
+                    activeLeave={activeLeave}
+                    suggestedLeaveDates={suggestedLeaveDates}
+                    schoolDates={schoolDates}
+                    lockedPlanId={lockedPlanId}
+                    previewDate={previewDate}
+                    lockDate={lockDate}
+                    scheduleClear={scheduleClear}
+                  />
+                ))}
+              </div>
+            </section>
+            <PlannerFooter />
+          </div>
+          <PlanDetails
+            plan={activePlan}
+            alternatives={alternatives}
+            holidayDates={holidayDates}
+            locked={Boolean(lockedPlanId)}
+            year={year}
+            cancelClear={cancelClear}
+            scheduleClear={scheduleClear}
+            closePlan={closePlan}
+            chooseAlternative={chooseAlternative}
+          />
         </div>
-        <PlannerFooter />
       </div>
-
-      {activePlan ? <button className={styles.sheetBackdrop} type="button" aria-label="Close recommendation" onClick={closePlan} /> : null}
     </main>
   );
 }

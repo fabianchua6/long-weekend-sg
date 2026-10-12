@@ -1,73 +1,95 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-28T15:30:00+08:00",
+  "generatedAt": "2026-10-12T00:00:00+08:00",
   "title": "Design System: Long Weekend SG",
   "extensions": {
     "colorMeta": {
-      "page": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#faf7f1", "tonalRamp": ["#2f2926", "#554c46", "#776d66", "#998f87", "#bcb2a9", "#d8d0c7", "#ede7df", "#faf7f1"] },
-      "surface": { "role": "neutral", "displayName": "Soft White", "canonical": "#fffdf9", "tonalRamp": ["#302b27", "#554f49", "#79726b", "#9c958e", "#beb8b1", "#ddd8d2", "#f0ece7", "#fffdf9"] },
-      "ink": { "role": "neutral", "displayName": "Charcoal Ink", "canonical": "#2f2926", "tonalRamp": ["#2f2926", "#4f4843", "#706861", "#918981", "#b1aaa2", "#d0cac3", "#e9e4de", "#faf7f1"] },
-      "holiday": { "role": "primary", "displayName": "Holiday Plum", "canonical": "#6b243e", "tonalRamp": ["#3e1024", "#552036", "#6b243e", "#8e3d5b", "#ad5c76", "#cc879b", "#e5b7c5", "#f6e9ee"] },
-      "leave": { "role": "secondary", "displayName": "Leave Marigold", "canonical": "#f5d36b", "tonalRamp": ["#5b430d", "#7c5c10", "#a47b17", "#c99c22", "#e2b94a", "#f5d36b", "#fbe9ac", "#fff7d8"] },
-      "school": { "role": "success", "displayName": "School Olive", "canonical": "#e5e7d2", "tonalRamp": ["#3f4620", "#59602f", "#747c43", "#92995e", "#afb681", "#cdd1ad", "#e5e7d2", "#f5f5e9"] }
+      "page": { "role": "neutral", "displayName": "Page White", "canonical": "#ffffff", "tonalRamp": ["#171a1f", "#343840", "#505762", "#6c7480", "#8c949e", "#adb4bc", "#d2d6db", "#ffffff"] },
+      "surface": { "role": "neutral", "displayName": "Surface White", "canonical": "#ffffff", "tonalRamp": ["#171a1f", "#343840", "#505762", "#6c7480", "#8c949e", "#adb4bc", "#d2d6db", "#ffffff"] },
+      "subtle": { "role": "neutral", "displayName": "Calendar Mist", "canonical": "#f3f5f7", "tonalRamp": ["#171a1f", "#343840", "#505762", "#6c7480", "#8c949e", "#adb4bc", "#dce0e4", "#f3f5f7"] },
+      "ink": { "role": "neutral", "displayName": "Calendar Ink", "canonical": "#171a1f", "tonalRamp": ["#171a1f", "#343840", "#505762", "#6c7480", "#8c949e", "#adb4bc", "#d2d6db", "#ffffff"] },
+      "muted": { "role": "neutral", "displayName": "Muted Slate", "canonical": "#626975", "tonalRamp": ["#343840", "#454b54", "#626975", "#7d848e", "#9aa1aa", "#b8bec5", "#d6d9dd", "#f3f5f7"] },
+      "line": { "role": "neutral", "displayName": "Cool Line", "canonical": "#e5e8ec", "tonalRamp": ["#505762", "#6c7480", "#8c949e", "#adb4bc", "#c5cad0", "#d7dade", "#e5e8ec", "#ffffff"] },
+      "holiday": { "role": "primary", "displayName": "Holiday Orange", "canonical": "#b7430b", "tonalRamp": ["#3f1103", "#6f2707", "#963807", "#b7430b", "#ce6130", "#e1875f", "#f0b49b", "#ffeadb"] },
+      "holiday-soft": { "role": "primary", "displayName": "Holiday Wash", "canonical": "#ffeadb", "tonalRamp": ["#3f1103", "#6f2707", "#963807", "#b7430b", "#ce6130", "#e1875f", "#f0b49b", "#ffeadb"] },
+      "leave": { "role": "secondary", "displayName": "Leave Blue", "canonical": "#bbdcfc", "tonalRamp": ["#12314d", "#26547d", "#3974a5", "#5c93c0", "#82add3", "#bbdcfc", "#d5eaff", "#e4f1ff"] },
+      "leave-soft": { "role": "secondary", "displayName": "Leave Wash", "canonical": "#e4f1ff", "tonalRamp": ["#12314d", "#26547d", "#3974a5", "#5c93c0", "#82add3", "#bbdcfc", "#d5eaff", "#e4f1ff"] },
+      "school": { "role": "tertiary", "displayName": "School Green", "canonical": "#e5eddc", "tonalRamp": ["#27351e", "#405531", "#5d714c", "#7f916d", "#a5b493", "#c3d0b6", "#e5eddc", "#f4f7f0"] },
+      "focus": { "role": "tertiary", "displayName": "Focus Blue", "canonical": "#326ba2", "tonalRamp": ["#102c48", "#1b476f", "#256092", "#326ba2", "#5688bb", "#7da7cf", "#b0c9e0", "#e5eef7"] }
     },
     "typographyMeta": {
-      "editorial": { "displayName": "Editorial", "purpose": "Product title, month names, and recommendation exchange." },
-      "body": { "displayName": "Body", "purpose": "Controls, calendar numerals, caveats, and source links." }
+      "editorial": { "displayName": "Quiet Editorial", "purpose": "Product title and modest month and recommendation headings." },
+      "body": { "displayName": "Workspace Sans", "purpose": "Calendar numerals, controls, labels, caveats, and source links." }
     },
     "shadows": [
-      { "name": "card", "value": "0 8px 24px rgb(83 59 44 / 5%)", "purpose": "Gives white month cards a gentle paper-like lift." },
-      { "name": "active-card", "value": "0 14px 36px rgb(88 35 57 / 12%)", "purpose": "Separates a month containing the active break." },
-      { "name": "control", "value": "0 5px 18px rgb(73 51 39 / 7%)", "purpose": "Gives the year and Settings controls a quiet lift." },
-      { "name": "control-hover", "value": "0 8px 22px rgb(73 51 39 / 11%)", "purpose": "Responds to pointer hover without adding colour." },
-      { "name": "settings-popover", "value": "0 18px 48px rgb(73 51 39 / 16%)", "purpose": "Separates the compact Settings layer from the calendar." },
-      { "name": "recommendation", "value": "0 22px 54px rgb(72 24 45 / 26%)", "purpose": "Establishes the recommendation as the saturated focal layer." }
+      { "name": "settings-popover", "value": "0 12px 36px rgb(20 30 45 / 12%)", "purpose": "Separates the open Settings menu from the flat calendar." },
+      { "name": "mobile-sheet", "value": "0 -8px 40px rgb(20 30 45 / 10%)", "purpose": "Lifts the native mobile recommendation sheet above the calendar." }
     ],
     "motion": [
-      { "name": "state", "value": "150ms ease", "purpose": "Small shadow and position transitions; removed under reduced motion." },
-      { "name": "year-swipe", "value": "250ms cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Moves between 2027 and 2028 in the direction shown by the year control; removed under reduced motion." }
+      { "name": "state", "value": "150ms ease", "purpose": "Small control, settings, and focus state transitions; removed under reduced motion." },
+      { "name": "year-swipe", "value": "240ms cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Moves between 2027 and 2028 in the direction shown by the year control; removed under reduced motion." },
+      { "name": "sheet-in", "value": "220ms cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Raises the mobile native dialog sheet; removed under reduced motion." }
     ],
     "breakpoints": [
-      { "name": "three-column", "value": "1220px" },
-      { "name": "two-column", "value": "880px" },
-      { "name": "mobile", "value": "620px" }
+      { "name": "four-column", "value": "1251px and wider" },
+      { "name": "three-column", "value": "1250px" },
+      { "name": "two-column", "value": "1000px" },
+      { "name": "mobile-sheet", "value": "760px" },
+      { "name": "one-column", "value": "520px" }
     ]
   },
   "components": [
     {
-      "name": "Month Card",
+      "name": "Year Switch",
+      "kind": "button",
+      "refersTo": "year-switch",
+      "description": "Compact directional control for moving between the official 2027 view and provisional 2028 view.",
+      "html": "<button class=\"ds-year-switch\" type=\"button\" aria-label=\"Show 2028 calendar\"><span>2027</span><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
+      "css": ".ds-year-switch{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:40px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#171a1f;font:650 1.05rem/1 Geist,sans-serif;font-variant-numeric:tabular-nums;cursor:pointer;transition:background 150ms ease}.ds-year-switch:hover{background:#f3f5f7}.ds-year-switch:focus-visible{outline:2px solid #326ba2;outline-offset:3px}.ds-year-switch svg{width:17px;height:17px}"
+    },
+    {
+      "name": "Month Calendar",
       "kind": "card",
       "refersTo": "month-card",
-      "description": "Warm-white editorial calendar surface with a black serif month name.",
-      "html": "<article class=\"ds-month-card\"><strong>March</strong><span>03</span></article>",
-      "css": ".ds-month-card{display:flex;justify-content:space-between;min-height:180px;padding:17px;border:0;border-radius:20px;background:#fffdf9;color:#2f2926;box-shadow:0 8px 24px rgb(83 59 44 / 5%)}.ds-month-card strong{font:530 23px Newsreader,Georgia,serif}.ds-month-card:focus-visible{outline:2px solid #a43a5d;outline-offset:3px}"
+      "description": "Borderless monthly calendar surface within the full-year map.",
+      "html": "<section class=\"ds-month\" aria-labelledby=\"ds-march\"><h2 id=\"ds-march\">March</h2><div class=\"ds-week\"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div><div class=\"ds-days\"><button type=\"button\">1</button><button type=\"button\" class=\"ds-leave\">2</button><button type=\"button\" class=\"ds-holiday\">3</button></div></section>",
+      "css": ".ds-month{min-width:0;background:transparent;color:#171a1f}.ds-month h2{margin:0 0 10px;font:520 1.28rem/1.2 Newsreader,Georgia,serif;letter-spacing:-.015em}.ds-week,.ds-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.ds-week{margin-bottom:7px;color:#626975;font:400 .62rem/1 Geist,sans-serif;text-align:center}.ds-days button{display:grid;place-items:center;height:28px;border:0;border-radius:5px;background:transparent;color:#171a1f;font:400 .7rem/1 Geist,sans-serif;font-variant-numeric:tabular-nums}.ds-days button:focus-visible{outline:2px solid #326ba2;outline-offset:3px}.ds-days .ds-leave{background:#bbdcfc}.ds-days .ds-holiday{width:27px;height:27px;border-radius:999px;background:#b7430b;color:#fff;font-weight:600}"
     },
     {
       "name": "Holiday Day",
       "kind": "button",
       "refersTo": "holiday-day",
-      "description": "Official holiday marker and primary semantic plum accent.",
-      "html": "<button class=\"ds-holiday\" aria-label=\"Public holiday\">9</button>",
-      "css": ".ds-holiday{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:50%;background:#6b243e;color:#fffaf6;font:760 11px Geist,sans-serif}.ds-holiday:focus-visible{outline:2px solid #a43a5d;outline-offset:3px}"
+      "description": "Solid orange official holiday marker with an accessible interactive label.",
+      "html": "<button class=\"ds-holiday\" type=\"button\" aria-label=\"Public holiday\">9</button>",
+      "css": ".ds-holiday{display:grid;width:27px;height:27px;place-items:center;border:0;border-radius:999px;background:#b7430b;color:#fff;font:600 11px/1 Geist,sans-serif;font-variant-numeric:tabular-nums;cursor:pointer}.ds-holiday:hover{box-shadow:inset 0 0 0 1px #8e350c}.ds-holiday:focus-visible{outline:2px solid #326ba2;outline-offset:3px}"
     },
     {
       "name": "Recommendation Panel",
       "kind": "card",
-      "refersTo": "plan-popover",
-      "description": "The single saturated editorial layer that explains the leave-to-rest tradeoff.",
-      "html": "<section class=\"ds-plan\"><strong>Take 2 leave days → 5 days off</strong></section>",
-      "css": ".ds-plan{padding:22px;border:1px solid #7c3850;border-radius:20px;background:#552036;color:#fff9f5;box-shadow:0 22px 54px rgb(72 24 45 / 26%)}.ds-plan strong{font:520 36px/1 Newsreader,Georgia,serif}"
+      "refersTo": "details-panel",
+      "description": "Stable desktop rail that explains the selected continuous break and its leave cost.",
+      "html": "<aside class=\"ds-details\" aria-label=\"Break details\"><h2>March break</h2><strong>5 days off</strong><p>2 leave days</p></aside>",
+      "css": ".ds-details{min-height:100%;padding:36px 24px;background:#f7f8fa;color:#171a1f;border-left:1px solid #e5e8ec}.ds-details h2{margin:0 0 26px;font:500 1.9rem/1.15 Newsreader,Georgia,serif;letter-spacing:-.025em}.ds-details strong{display:block;font:560 clamp(2.2rem,3.15vw,3.4rem)/1.1 Geist,sans-serif;font-variant-numeric:tabular-nums}.ds-details p{font:400 1rem/1.45 Geist,sans-serif}.ds-details:focus-within{outline:2px solid #326ba2;outline-offset:-2px}"
+    },
+    {
+      "name": "Mobile Recommendation Sheet",
+      "kind": "custom",
+      "refersTo": "mobile-sheet",
+      "description": "Native dialog version of the recommendation details at mobile widths.",
+      "html": "<dialog class=\"ds-sheet\"><div class=\"ds-handle\" aria-hidden=\"true\"></div><h2>March break</h2><strong>5 days off</strong><button type=\"button\" aria-label=\"Close recommendation\">×</button></dialog>",
+      "css": ".ds-sheet{width:100%;max-width:none;margin:0;padding:26px 24px;border:0;border-radius:20px 20px 0 0;background:#fff;color:#171a1f;box-shadow:0 -8px 40px rgb(20 30 45 / 10%)}.ds-sheet::backdrop{background:rgb(20 30 45 / 12%)}.ds-sheet h2{font:500 1.6rem/1.15 Newsreader,Georgia,serif}.ds-sheet strong{font:560 2.7rem/1.1 Geist,sans-serif}.ds-handle{width:36px;height:4px;margin:-14px auto 20px;border-radius:3px;background:#dedfe2}.ds-sheet button{position:absolute;top:22px;right:15px;border:0;background:transparent;color:#626975;font-size:1.5rem}.ds-sheet button:focus-visible{outline:2px solid #326ba2;outline-offset:3px}"
     }
   ],
   "narrative": {
-    "northStar": "The Editorial Year Wall",
-    "overview": "A warm, typographic annual planning wall where black carries the interface and sparse colour explains calendar meaning.",
-    "keyCharacteristics": ["Black editorial typography", "Warm paper surfaces", "Meaningful colour pops", "Dense but tactile year overview"],
+    "northStar": "The Quiet Year Workspace",
+    "overview": "A compact white calendar workspace where twelve months make the full-year planning job visible. Black typography carries the interface; orange public holidays and pale-blue leave ranges explain the calendar without decorative theming. The map is flat at rest, with a fixed desktop details rail and native mobile dialog for the active break.",
+    "keyCharacteristics": ["Full-year calendar workspace", "White surfaces and black default typography", "Orange holidays and pale-blue leave ranges", "Fixed desktop details panel and native mobile dialog"],
     "rules": [
-      { "name": "Black First", "body": "Default text and controls remain black or charcoal; plum is not a heading colour.", "section": "colors" },
-      { "name": "Meaningful Colour", "body": "Every non-neutral hue maps to holiday, leave, school, observed, or forecast status.", "section": "colors" }
+      { "name": "Meaningful Colour", "body": "Every non-neutral colour must explain a calendar state; accents do not decorate the chrome.", "section": "colors" },
+      { "name": "Small Editorial", "body": "Use Newsreader for product and month headings only; dates, switches, caveats, and source links stay in Geist.", "section": "typography" },
+      { "name": "Flat Workspace", "body": "Keep the year map visually quiet; use elevation only for open, active, or layered states.", "section": "elevation" }
     ],
-    "dos": ["Keep the whole year primary", "Use Newsreader only for editorial moments", "Preserve keyboard and tap access"],
-    "donts": ["Do not tint all headings plum", "Do not colour toggles by category", "Do not add voice-assistant or airport motifs"]
+    "dos": ["Make the twelve-month year wall primary", "Keep ordinary text and controls black or charcoal", "Reserve colour for documented calendar meanings", "Keep the recommendation available without hover"],
+    "donts": ["Do not add dark backgrounds, airport motifs, gradients, or decorative travel imagery", "Do not use plum or multiple coloured toggle treatments as interface chrome", "Do not add borders or shadows to every month card", "Do not ship the review comps as page imagery"]
   }
 }

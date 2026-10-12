@@ -52,15 +52,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable}`}
     >
       <body>
-        {/*
-          THESIS: The annual planning wall feels like a considered travel magazine spread, never an HR dashboard.
-          OWN-WORLD: Warm ivory paper, softly raised white cards, deep plum holidays, marigold leave paths, olive school breaks, and an expressive editorial serif paired with a quiet sans.
-          STORY: Scan the whole year, choose a promising date, then follow the colored break path to a rich plum recommendation that makes the leave tradeoff immediate.
-          FIRST VIEWPORT: Oversized serif brand on the left, compact warm pill controls on the right, and a dense four-column year wall below.
-          FORM: User-approved warm editorial year wall; concept seed 8e92029a.
+        <span hidden data-design-contract="e6381b92">
+          THESIS: A full-year calendar workspace makes the cost of a break visible.
+          OWN-WORLD: White, black type, modest Newsreader headings, orange holiday circles and pale blue leave paths.
+          STORY: Scan twelve months, preview dates, lock a break, compare in the stable right panel.
+          FIRST VIEWPORT: Compact header, four-column borderless year map, fixed-width neutral details panel. Mobile uses a native dialog sheet.
+          FORM: User-approved compact year workspace, seed e6381b92, composition a-compact.png.
           FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
-        */}
-        <span data-design-contract="8e92029a" hidden />
+        </span>
         {children}
       </body>
     </html>
