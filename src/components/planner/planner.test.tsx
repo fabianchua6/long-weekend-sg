@@ -62,6 +62,14 @@ describe("desktop leave planning", () => {
     const calendar = host.querySelector('[aria-label="2027 calendar"]')!;
     const pills = [...calendar.querySelectorAll<HTMLElement>('[data-range="potential"]')];
     expect(pills.length).toBeGreaterThan(0);
+    for (const id of new Set(pills.map((slot) => slot.dataset.rangeId))) {
+      const range = pills.filter((slot) => slot.dataset.rangeId === id);
+      expect(range.filter((slot) => slot.hasAttribute("data-range-start"))).toHaveLength(1);
+      expect(range.filter((slot) => slot.hasAttribute("data-range-end"))).toHaveLength(1);
+    }
+    const continuations = pills.filter((slot) => slot.hasAttribute("data-range-continues-after"));
+    expect(continuations.length).toBeGreaterThan(0);
+    expect(continuations.every((slot) => !slot.hasAttribute("data-range-end"))).toBe(true);
     const weekend = pills.find((slot) => {
       const day = slot.querySelector<HTMLButtonElement>('button[data-date]')?.dataset.date;
       return day && new Date(`${day}T00:00:00Z`).getUTCDay() === 0;

@@ -32,12 +32,14 @@ export function featuredBreakPlans(plans: BreakPlan[]): BreakPlan[] {
   return featured;
 }
 
-/** Close each capsule at a week/month edge, including cross-month breaks. */
+/** Only true endpoints round off; week/month wraps have square continuation edges. */
 export function rangeEdges(date: DateString, plan: BreakPlan) {
   const weekday = new Date(`${date}T00:00:00Z`).getUTCDay();
   return {
-    start: date === plan.startDate || date.endsWith("-01") || weekday === 1,
-    end: date === plan.endDate || addDays(date, 1).slice(0, 7) !== date.slice(0, 7) || weekday === 0,
+    start: date === plan.startDate,
+    end: date === plan.endDate,
+    continuesBefore: date !== plan.startDate && (date.endsWith("-01") || weekday === 1),
+    continuesAfter: date !== plan.endDate && (addDays(date, 1).slice(0, 7) !== date.slice(0, 7) || weekday === 0),
   };
 }
 

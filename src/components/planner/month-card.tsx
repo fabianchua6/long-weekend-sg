@@ -157,6 +157,8 @@ function DayCell(props: DayCellProps) {
       data-range-id={band?.id}
       data-range-forecast={band?.anchorHolidays.some((holiday) => holiday.status === "forecast") || undefined}
       data-range-start={edges?.start || undefined}
+      data-range-continues-before={edges?.continuesBefore || undefined}
+      data-range-continues-after={edges?.continuesAfter || undefined}
       data-range-end={edges?.end || undefined}>
       {interactive ? (
         <button

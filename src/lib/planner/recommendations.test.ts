@@ -50,15 +50,16 @@ it("offers the natural Good Friday weekend and removes truncated two-day extensi
 
 it("returns no options for an unmarked date", () => expect(getPlanOptions([])).toEqual([]));
 
-it("rounds caps at week and month boundaries, including leap day", () => {
+it("distinguishes true endpoints from square week and month continuations, including leap day", () => {
   const holidays = effectiveHolidayDates(YEAR_DATA[2027].holidays, {}, 2027);
   const crossMonth = usefulPlans(buildBreakPlans(2027), holidays).find((plan) => plan.startDate === "2027-04-30" && plan.endDate === "2027-05-03")!;
   expect(crossMonth).toBeDefined();
-  expect(rangeEdges("2027-04-30", crossMonth)).toEqual({ start: true, end: true });
-  expect(rangeEdges("2027-05-01", crossMonth)).toEqual({ start: true, end: false });
-  expect(rangeEdges("2027-05-02", crossMonth)).toEqual({ start: false, end: true });
-  expect(rangeEdges("2027-05-03", crossMonth)).toEqual({ start: true, end: true });
+  expect(rangeEdges("2027-04-30", crossMonth)).toEqual({ start: true, end: false, continuesBefore: false, continuesAfter: true });
+  expect(rangeEdges("2027-05-01", crossMonth)).toEqual({ start: false, end: false, continuesBefore: true, continuesAfter: false });
+  expect(rangeEdges("2027-05-02", crossMonth)).toEqual({ start: false, end: false, continuesBefore: false, continuesAfter: true });
+  expect(rangeEdges("2027-05-03", crossMonth)).toEqual({ start: false, end: true, continuesBefore: true, continuesAfter: false });
   const leapRange = { ...crossMonth, startDate: "2028-02-28" as const, endDate: "2028-03-03" as const };
-  expect(rangeEdges("2028-02-29", leapRange)).toEqual({ start: false, end: true });
-  expect(rangeEdges("2028-03-01", leapRange)).toEqual({ start: true, end: false });
+  expect(rangeEdges("2028-02-29", leapRange)).toEqual({ start: false, end: false, continuesBefore: false, continuesAfter: true });
+  expect(rangeEdges("2028-03-01", leapRange)).toEqual({ start: false, end: false, continuesBefore: true, continuesAfter: false });
+  expect(rangeEdges("2028-03-02", leapRange)).toEqual({ start: false, end: false, continuesBefore: false, continuesAfter: false });
 });
