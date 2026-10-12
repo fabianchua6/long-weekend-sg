@@ -152,11 +152,16 @@ function PlannerHeader({
             className={styles.yearSwitch}
             type="button"
             aria-label={`Show ${nextYear} calendar`}
+            data-year={year}
             onClick={() => onYearChange(nextYear)}
           >
-            {year === 2028 ? <ChevronRight className={styles.chevronLeft} /> : null}
-            <span>{year}</span>
-            {year === 2027 ? <ChevronRight /> : null}
+            <span className={styles.previousYearArrow} aria-hidden="true"><ChevronRight className={styles.chevronLeft} /></span>
+            <span className={styles.yearLabel} aria-hidden="true">
+              <span className={styles.yearLabelTrack}>
+                <span>2027</span><span>2028</span>
+              </span>
+            </span>
+            <span className={styles.nextYearArrow} aria-hidden="true"><ChevronRight /></span>
           </button>
 
           <span className={`${styles.statusBadge} ${year === 2028 ? styles.forecastBadge : ""}`}>
@@ -252,20 +257,7 @@ function PlannerFooter() {
   );
 }
 
-export function Planner({ initialYear }: PlannerProps) {
-  const searchParams = useSearchParams();
-  const [year, setYear] = useState<SupportedYear>(() =>
-    searchParams.get("year") === "2028" ? 2028 : initialYear,
-  );
-  const [schoolOverlay, setSchoolOverlay] = useState(false);
-  const [saturdayPolicy, setSaturdayPolicy] = useState(false);
-  const [hoveredPlanId, setHoveredPlanId] = useState<string | null>(null);
-  const [lockedPlanId, setLockedPlanId] = useState<string | null>(null);
-  const [anchorDate, setAnchorDate] = useState<DateString | null>(null);
-  const [yearDirection, setYearDirection] = useState<"forward" | "backward" | "idle">("idle");
-  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const suppressedFocusPreviewDate = useRef<DateString | null>(null);
-
+function useCalendarData(year: SupportedYear, saturdayPolicy: boolean, schoolOverlay: boolean) {
   const yearData = YEAR_DATA[year];
 
   const holidayDates = useMemo(
@@ -283,11 +275,6 @@ export function Planner({ initialYear }: PlannerProps) {
           plan.totalDaysOff >= plan.leaveCost + 2,
       ),
     [saturdayPolicy, year, yearData],
-  );
-
-  const planById = useMemo(
-    () => new Map(plans.map((plan) => [plan.id, plan] as const)),
-    [plans],
   );
 
   const plansByDate = useMemo(() => {
@@ -318,6 +305,30 @@ export function Planner({ initialYear }: PlannerProps) {
     }
     return dates;
   }, [schoolOverlay, year]);
+
+  return { year, yearData, holidayDates, plans, plansByDate, suggestedLeaveDates, schoolDates };
+}
+
+export function Planner({ initialYear }: PlannerProps) {
+  const searchParams = useSearchParams();
+  const [year, setYear] = useState<SupportedYear>(() =>
+    searchParams.get("year") === "2028" ? 2028 : initialYear,
+  );
+  const [schoolOverlay, setSchoolOverlay] = useState(false);
+  const [saturdayPolicy, setSaturdayPolicy] = useState(false);
+  const [hoveredPlanId, setHoveredPlanId] = useState<string | null>(null);
+  const [lockedPlanId, setLockedPlanId] = useState<string | null>(null);
+  const [anchorDate, setAnchorDate] = useState<DateString | null>(null);
+  const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressedFocusPreviewDate = useRef<DateString | null>(null);
+  // Keep both pages mounted so CSS can reverse an in-flight swipe smoothly.
+  const calendar2027 = useCalendarData(2027, saturdayPolicy, schoolOverlay);
+  const calendar2028 = useCalendarData(2028, saturdayPolicy, false);
+  const { holidayDates, plans, plansByDate } = year === 2027 ? calendar2027 : calendar2028;
+  const planById = useMemo(
+    () => new Map(plans.map((plan) => [plan.id, plan] as const)),
+    [plans],
+  );
 
   const featuredPlan = plans.find((plan) => plan.totalDaysOff === 9 && plan.leaveCost === 3) ?? plans[0] ?? null;
   const activePlan = planById.get(lockedPlanId ?? hoveredPlanId ?? "") ?? featuredPlan;
@@ -412,34 +423,16 @@ export function Planner({ initialYear }: PlannerProps) {
 
   const changeYear = (nextYear: SupportedYear) => {
     if (nextYear === year) return;
-    const direction = nextYear > year ? "forward" : "backward";
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const documentWithTransitions = document as Document & {
-      startViewTransition?: (callback: () => void | Promise<void>) => { finished: Promise<void> };
-    };
-    const canUseViewTransition = !reducedMotion && Boolean(documentWithTransitions.startViewTransition);
-    const updateYear = () => {
-      setYearDirection(canUseViewTransition ? "idle" : direction);
-      setYear(nextYear);
-      setSchoolOverlay(false);
-      closePlan();
-      const url = new URL(window.location.href);
-      url.searchParams.set("year", String(nextYear));
-      window.history.replaceState({}, "", url);
-    };
-
-    if (canUseViewTransition && documentWithTransitions.startViewTransition) {
-      document.documentElement.dataset.yearDirection = direction;
-      const transition = documentWithTransitions.startViewTransition(() => {
-        updateYear();
-        return new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      });
-      transition.finished.finally(() => {
-        delete document.documentElement.dataset.yearDirection;
-      });
-    } else {
-      updateYear();
-    }
+    cancelClear();
+    suppressedFocusPreviewDate.current = null;
+    setHoveredPlanId(null);
+    setLockedPlanId(null);
+    setAnchorDate(null);
+    setSchoolOverlay(false);
+    setYear(nextYear);
+    const url = new URL(window.location.href);
+    url.searchParams.set("year", String(nextYear));
+    window.history.replaceState({}, "", url);
   };
 
   useEffect(() => {
@@ -485,37 +478,44 @@ export function Planner({ initialYear }: PlannerProps) {
         />
 
         <div className={styles.workspace}>
-          <div
-            key={year}
-            className={`${styles.yearCanvas} ${yearDirection === "forward" ? styles.yearCanvasForward : yearDirection === "backward" ? styles.yearCanvasBackward : ""}`}
-          >
-            {year === 2028 ? <ForecastNotice /> : null}
-            <PlannerLegend year={year} schoolOverlay={schoolOverlay} />
-            <section className={styles.calendarSection} aria-label={`${year} calendar`}>
-              <div className={styles.calendarGrid}>
-                {MONTHS.map((month, monthIndex) => (
-                  <MonthCard
-                    key={month}
-                    month={month}
-                    monthIndex={monthIndex}
-                    year={year}
-                    yearHolidays={yearData.holidays}
-                    holidayDates={holidayDates}
-                    plansByDate={plansByDate}
-                    activePlan={activePlan}
-                    activeRange={activeRange}
-                    activeLeave={activeLeave}
-                    suggestedLeaveDates={suggestedLeaveDates}
-                    schoolDates={schoolDates}
-                    lockedPlanId={lockedPlanId}
-                    previewDate={previewDate}
-                    lockDate={lockDate}
-                    scheduleClear={scheduleClear}
-                  />
-                ))}
+          <div className={`t-page-slide ${styles.yearSlider}`} data-page={year === 2027 ? "1" : "2"}>
+            {[calendar2027, calendar2028].map((calendar) => (
+              <div
+                key={calendar.year}
+                className={`t-page ${styles.yearCanvas}`}
+                data-page-id={calendar.year === 2027 ? "1" : "2"}
+                inert={calendar.year !== year}
+                aria-hidden={calendar.year !== year}
+              >
+                {calendar.year === 2028 ? <ForecastNotice /> : null}
+                <PlannerLegend year={calendar.year} schoolOverlay={calendar.year === 2027 && schoolOverlay} />
+                <section className={styles.calendarSection} aria-label={`${calendar.year} calendar`}>
+                  <div className={styles.calendarGrid}>
+                    {MONTHS.map((month, monthIndex) => (
+                      <MonthCard
+                        key={month}
+                        month={month}
+                        monthIndex={monthIndex}
+                        year={calendar.year}
+                        yearHolidays={calendar.yearData.holidays}
+                        holidayDates={calendar.holidayDates}
+                        plansByDate={calendar.plansByDate}
+                        activePlan={calendar.year === year ? activePlan : null}
+                        activeRange={activeRange}
+                        activeLeave={activeLeave}
+                        suggestedLeaveDates={calendar.suggestedLeaveDates}
+                        schoolDates={calendar.schoolDates}
+                        lockedPlanId={lockedPlanId}
+                        previewDate={previewDate}
+                        lockDate={lockDate}
+                        scheduleClear={scheduleClear}
+                      />
+                    ))}
+                  </div>
+                </section>
+                <PlannerFooter />
               </div>
-            </section>
-            <PlannerFooter />
+            ))}
           </div>
           <PlanDetails
             plan={activePlan}

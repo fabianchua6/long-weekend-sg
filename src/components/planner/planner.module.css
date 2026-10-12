@@ -5,12 +5,20 @@
 .titleLine { display: flex; align-items: center; }
 .titleLine h1 { margin: 0; font-family: var(--font-editorial); font-size: 1.85rem; font-weight: 550; line-height: 1.1; letter-spacing: -0.035em; }
 .controls { display: flex; align-items: center; gap: 24px; }
-.statusBadge { display: inline-flex; align-items: center; gap: 8px; font-size: .76rem; white-space: nowrap; }
+.statusBadge { display: inline-flex; align-items: center; gap: 8px; min-width: 92px; font-size: .76rem; white-space: nowrap; }
 .statusBadge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #18866a; }
 .forecastBadge { color: #80551b; }
 .forecastBadge::before { background: #b97911; }
 .yearSwitch, .settingsButton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; border: 0; border-radius: 8px; padding: 0 10px; background: transparent; color: var(--ink); cursor: pointer; font-size: .8rem; }
-.yearSwitch { font-size: 1.05rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.yearSwitch { font-size: 1.05rem; font-weight: 650; font-variant-numeric: tabular-nums; gap: 5px; transition: background 150ms ease, scale 150ms ease; }
+.yearSwitch:active { scale: .96; }
+.yearLabel { display: block; width: 4ch; overflow: clip; }
+.yearLabelTrack { display: flex; width: 200%; transition: transform var(--page-slide-dur) var(--page-slide-ease); }
+.yearLabelTrack > span { flex: 0 0 50%; text-align: center; }
+.yearSwitch[data-year="2028"] .yearLabelTrack { transform: translateX(-50%); }
+.previousYearArrow, .nextYearArrow { display: flex; transition: opacity 180ms ease, transform var(--page-slide-dur) var(--page-slide-ease); }
+.yearSwitch[data-year="2027"] .previousYearArrow { opacity: 0; transform: translateX(5px); }
+.yearSwitch[data-year="2028"] .nextYearArrow { opacity: 0; transform: translateX(-5px); }
 .yearSwitch:hover, .settingsButton:hover { background: var(--subtle); }
 .yearSwitch svg, .settingsButton svg { width: 17px; height: 17px; }
 .chevronLeft { transform: rotate(180deg); }
@@ -28,7 +36,10 @@
 .toggleControl input:checked + .switch .switchKnob { transform: translateX(14px); }
 .toggleControl input:focus-visible + .switch { outline: 2px solid var(--focus); outline-offset: 3px; }
 .workspace { display: grid; grid-template-columns: minmax(0,1fr) 320px; align-items: start; }
-.yearCanvas { min-width: 0; padding: 24px 30px 16px; view-transition-name: year-calendar; }
+.yearSlider { display: grid; min-width: 0; overflow: clip; --page-slide-distance: 100%; --page-blur: 0px; }
+/* Both pages share one grid cell: stable height, full-width travel, no remounts. */
+.yearSlider > .yearCanvas:global(.t-page) { position: relative; inset: auto; grid-area: 1 / 1; opacity: 1; min-width: 0; align-self: start; }
+.yearCanvas { min-width: 0; padding: 24px 30px 16px; }
 .legend { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 22px; color: var(--muted); font-size: .72rem; margin-bottom: 24px; min-height: 18px; }
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
@@ -101,13 +112,6 @@ button.day:focus-visible { z-index: 2; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: end; }
 .mobileSheet { display: none; }
 .emptyPanel { color: var(--muted); font-size: .85rem; }
-.yearCanvasForward { animation: slide-forward 240ms cubic-bezier(.22,1,.36,1); }
-.yearCanvasBackward { animation: slide-backward 240ms cubic-bezier(.22,1,.36,1); }
-@keyframes slide-forward { from { opacity: .6; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes slide-backward { from { opacity: .6; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
-:global(::view-transition-old(year-calendar)), :global(::view-transition-new(year-calendar)) { animation-duration: 240ms; animation-timing-function: cubic-bezier(.22,1,.36,1); }
-:global(html[data-year-direction="forward"]::view-transition-new(year-calendar)) { animation-name: slide-forward; }
-:global(html[data-year-direction="backward"]::view-transition-new(year-calendar)) { animation-name: slide-backward; }
 @media (min-width: 1600px) {
   .workspace { grid-template-columns: minmax(0,1fr) 360px; }
   .yearCanvas { padding: 28px 40px 18px; }
@@ -169,6 +173,7 @@ button.day:focus-visible { z-index: 2; }
 }
 @keyframes sheet-in { from { transform: translateY(24px); opacity: .8; } to { transform: translateY(0); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .yearCanvasForward, .yearCanvasBackward, .mobileSheet[open] { animation: none; }
-  :global(::view-transition-old(year-calendar)), :global(::view-transition-new(year-calendar)) { animation: none; }
+  .mobileSheet[open] { animation: none; }
+  .yearLabelTrack, .previousYearArrow, .nextYearArrow, .yearSwitch { transition: none; }
+  .yearSwitch:active { scale: 1; }
 }
